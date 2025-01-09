@@ -9,6 +9,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
+pydantic = "^2.10.4"
 
 
 [tool.poetry.group.linters]
@@ -38,6 +39,7 @@ optional = true
 [tool.poetry.group.tools.dependencies]
 ipython = "^8.30.0"
 coverage = "^7.6.10"
+faker = "^33.3.0"
 
 
 [build-system]
