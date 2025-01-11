@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import Schedule
-from algorithm.validators import DoctorCountValidator, DoctorsRequestedDaysValidator
+from algorithm.validators import DoctorCountValidator, PreferencesCoherenceValidator
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
@@ -24,7 +24,7 @@ class Result:
 
 
 class DutySetter:
-    validator_classes = [DoctorCountValidator, DoctorsRequestedDaysValidator]
+    validator_classes = [DoctorCountValidator, PreferencesCoherenceValidator]
 
     def __init__(self, year: int, month: int, doctors_per_duty: int) -> None:
         self.duty_positions = doctors_per_duty

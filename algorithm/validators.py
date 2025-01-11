@@ -41,7 +41,7 @@ class DoctorCountValidator(BaseDutySettingValidator):
             )
 
 
-class DoctorsRequestedDaysValidator(BaseDutySettingValidator):
+class PreferencesCoherenceValidator(BaseDutySettingValidator):
     def perform_validation(self) -> None:
         for doctor in self.doctors:
             self._validate_no_consecutive_dates(doctor)

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from algorithm.duty_setter import DutySetter
 from algorithm.tests.utils import doctor_factory
-from algorithm.validators import DoctorCountValidator, DoctorsRequestedDaysValidator
+from algorithm.validators import DoctorCountValidator, PreferencesCoherenceValidator
 
 
 class DoctorCountValidatorTests(TestCase):
@@ -29,7 +29,7 @@ class DoctorCountValidatorTests(TestCase):
                 self.assertEqual(0, len(errors))
 
 
-class RequestedDaysValidatorTests(TestCase):
+class PreferencesCoherenceValidatorTests(TestCase):
     def setUp(self):
         self.doctor = doctor_factory()
         self.doctor.init_preferences(
@@ -49,12 +49,12 @@ class RequestedDaysValidatorTests(TestCase):
         preferences = self.doctor.preferences
         preferences.requested_days = [1, 3, 5, 7, 11]
 
-        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertEqual(0, len(errors))
 
         preferences.requested_days.extend((2, 12))
 
-        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertEqual(1, len(errors))
 
         for expected_msg in ['1 and 2', '2 and 3', '11 and 12']:
@@ -65,12 +65,12 @@ class RequestedDaysValidatorTests(TestCase):
         preferences.requested_days = [1, 3, 5]
         preferences.exceptions = [2, 4, 6]
 
-        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertEqual(0, len(errors))
 
         preferences.exceptions.extend((3, 5))
 
-        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertEqual(1, len(errors))
         self.assertIn('requests and excludes duties on the following dates: 3, 5', errors[0])
 
@@ -79,10 +79,10 @@ class RequestedDaysValidatorTests(TestCase):
         preferences.requested_days = [1, 3, 5]
         preferences.maximum_accepted_duties = 3
 
-        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertEqual(0, len(errors))
 
         preferences.maximum_accepted_duties = 2
 
-        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertIn('requests duties on 3 days, but would accept only 2 duties.', errors[0])
