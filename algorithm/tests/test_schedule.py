@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from algorithm.doctor import Doctor
 from algorithm.enums import DayCategory, StrainPoints
 from algorithm.schedule import Day, Duty, Schedule
+from algorithm.tests.utils import doctor_factory
 
 
 class ScheduleTests(TestCase):
@@ -104,7 +104,7 @@ class DutyTests(TestCase):
     def test_duty_update(self):
         day = Day(1, 1, 2025)
         duty = Duty(day, 1)
-        doctor = Doctor(1, 'John', [], [])
+        doctor = doctor_factory()
 
         duty.update(doctor, 2, 20, True)
 

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import Schedule
+from algorithm.validators import BaseDutySettingValidator, DoctorCountValidator
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
@@ -22,7 +23,7 @@ class Result:
 
 
 class DutySetter:
-    validator_classes = []
+    validator_classes = [DoctorCountValidator]
 
     def __init__(self, year: int, month: int, doctors_per_duty: int) -> None:
         self.duty_positions = doctors_per_duty
@@ -51,10 +52,12 @@ class DutySetter:
 
     def check_if_duties_can_be_set(self) -> None:
         errors = []
-
         for validator_class in self.validator_classes:
-            validator = validator_class(self.schedule, self.doctors)
-            try:
-                validator.run()
-            except CantSetDutiesError as exc:
-                errors.extend(exc.errors)
+            errors += self._run_validator(validator_class)
+
+    def _run_validator(self, validator_class: type[BaseDutySettingValidator]) -> list[str]:
+        try:
+            validator_class(self.schedule, self.doctors).run()
+            return []
+        except CantSetDutiesError as exc:
+            return exc.errors

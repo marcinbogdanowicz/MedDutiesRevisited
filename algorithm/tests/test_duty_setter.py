@@ -2,9 +2,8 @@ from contextlib import suppress
 from unittest import TestCase
 from unittest.mock import Mock, call, patch
 
-from algorithm.doctor import Doctor
 from algorithm.duty_setter import DutySetter
-from algorithm.tests.utils import ExpectedError
+from algorithm.tests.utils import ExpectedError, doctor_factory
 
 
 class DutySetterTests(TestCase):
@@ -18,7 +17,7 @@ class DutySetterTests(TestCase):
         self.assertEqual(3, len(schedule.position_numbers))
 
     def test_adding_doctors(self):
-        doctor_1, doctor_2 = Doctor(1, 'John'), Doctor(2, 'Jane')
+        doctor_1, doctor_2 = doctor_factory(2)
         setter = DutySetter(2025, 1, 3)
 
         setter.add_doctor(doctor_2, doctor_1)
@@ -27,15 +26,15 @@ class DutySetterTests(TestCase):
         self.assertListEqual(setter.doctors, expected_doctors)
 
     def test_getting_doctors(self):
-        doctor_1, doctor_2 = Doctor(1, 'John'), Doctor(2, 'Jane')
+        doctor_1, doctor_2 = doctor_factory(2)
         setter = DutySetter(2025, 1, 3)
 
         setter.add_doctor(doctor_2, doctor_1)
 
-        doctor = setter.get_doctor(2)
+        doctor = setter.get_doctor(doctor_2.pk)
         self.assertEqual(doctor_2, doctor)
 
-        doctor = setter.get_doctor(3)
+        doctor = setter.get_doctor(-1)
         self.assertIsNone(doctor)
 
     @patch('algorithm.duty_setter.DutySetter.check_if_duties_can_be_set', side_effect=ExpectedError)

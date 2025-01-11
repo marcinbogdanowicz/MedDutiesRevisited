@@ -2,6 +2,7 @@ import random
 
 from faker import Faker
 
+from algorithm.doctor import Doctor
 from algorithm.schedule import Day
 from algorithm.utils import get_max_number_of_duties_for_month
 
@@ -56,6 +57,21 @@ def input_factory(
         "doctors": doctors,
         "duties": duties,
     }
+
+
+def doctor_factory(count=1, /, **kwargs):
+    def get_init_data():
+        return {
+            "name": kwargs.get('name', faker.name()),
+            "pk": kwargs.get('pk', faker.unique.random_int(min=1)),
+            "last_month_duties": kwargs.get('last_month_duties', []),
+            "next_month_duties": kwargs.get('next_month_duties', []),
+        }
+
+    if count == 1:
+        return Doctor(**get_init_data())
+
+    return [Doctor(**get_init_data()) for _ in range(count)]
 
 
 class ExpectedError(Exception):
