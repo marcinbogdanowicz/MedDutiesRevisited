@@ -20,7 +20,7 @@ class DoctorTests(TestCase):
         year = 2025
         kwargs = {
             'exceptions': [1],
-            'preferred_days': [2],
+            'requested_days': [2],
             'preferred_weekdays': [0, 1, 2, 3, 4, 5, 6],
             'preferred_positions': [1],
             'maximum_accepted_duties': 15,

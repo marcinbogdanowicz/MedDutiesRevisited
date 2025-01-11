@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from algorithm.duty_setter import DutySetter
 from algorithm.tests.utils import doctor_factory
-from algorithm.validators import DoctorCountValidator, DoctorsPreferredDaysValidator
+from algorithm.validators import DoctorCountValidator, DoctorsRequestedDaysValidator
 
 
 class DoctorCountValidatorTests(TestCase):
@@ -29,14 +29,14 @@ class DoctorCountValidatorTests(TestCase):
                 self.assertEqual(0, len(errors))
 
 
-class PreferredDaysValidatorTests(TestCase):
+class RequestedDaysValidatorTests(TestCase):
     def setUp(self):
         self.doctor = doctor_factory()
         self.doctor.init_preferences(
             year=2025,
             month=1,
             exceptions=[],
-            preferred_days=[],
+            requested_days=[],
             preferred_weekdays=list(range(7)),
             preferred_positions=list(range(3)),
             maximum_accepted_duties=10,
@@ -47,14 +47,14 @@ class PreferredDaysValidatorTests(TestCase):
 
     def test_consecutive_days_validation(self):
         preferences = self.doctor.preferences
-        preferences.preferred_days = [1, 3, 5, 7, 11]
+        preferences.requested_days = [1, 3, 5, 7, 11]
 
-        errors = self.duty_setter._run_validator(DoctorsPreferredDaysValidator)
+        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
         self.assertEqual(0, len(errors))
 
-        preferences.preferred_days.extend((2, 12))
+        preferences.requested_days.extend((2, 12))
 
-        errors = self.duty_setter._run_validator(DoctorsPreferredDaysValidator)
+        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
         self.assertEqual(1, len(errors))
 
         for expected_msg in ['1 and 2', '2 and 3', '11 and 12']:
@@ -62,27 +62,27 @@ class PreferredDaysValidatorTests(TestCase):
 
     def test_coincidence_with_exceptions_validation(self):
         preferences = self.doctor.preferences
-        preferences.preferred_days = [1, 3, 5]
+        preferences.requested_days = [1, 3, 5]
         preferences.exceptions = [2, 4, 6]
 
-        errors = self.duty_setter._run_validator(DoctorsPreferredDaysValidator)
+        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
         self.assertEqual(0, len(errors))
 
         preferences.exceptions.extend((3, 5))
 
-        errors = self.duty_setter._run_validator(DoctorsPreferredDaysValidator)
+        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
         self.assertEqual(1, len(errors))
-        self.assertIn('prefers and excludes the following dates: 3, 5', errors[0])
+        self.assertIn('requests and excludes duties on the following dates: 3, 5', errors[0])
 
     def test_duties_count_validation(self):
         preferences = self.doctor.preferences
-        preferences.preferred_days = [1, 3, 5]
+        preferences.requested_days = [1, 3, 5]
         preferences.maximum_accepted_duties = 3
 
-        errors = self.duty_setter._run_validator(DoctorsPreferredDaysValidator)
+        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
         self.assertEqual(0, len(errors))
 
         preferences.maximum_accepted_duties = 2
 
-        errors = self.duty_setter._run_validator(DoctorsPreferredDaysValidator)
-        self.assertIn('prefers duties on 3 days, but would accept only 2 duties.', errors[0])
+        errors = self.duty_setter._run_validator(DoctorsRequestedDaysValidator)
+        self.assertIn('requests duties on 3 days, but would accept only 2 duties.', errors[0])

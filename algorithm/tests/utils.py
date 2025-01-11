@@ -26,7 +26,7 @@ def input_factory(
             "name": faker.name(),
             "preferences": {
                 "exceptions": [],
-                "preferred_days": [],
+                "requested_days": [],
                 "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
                 "preferred_positions": list(positions),
                 "maximum_accepted_duties": accepted_duties,

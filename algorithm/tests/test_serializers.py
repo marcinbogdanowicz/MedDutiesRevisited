@@ -53,13 +53,13 @@ class SerializersTests(TestCase):
         with self.assertRaises(ValueError):
             InputSerializer.model_validate(self.data)
 
-    def test_preferred_days_validation(self):
-        self.data["doctors"][0]["preferences"]["preferred_days"] = [32]
+    def test_requested_days_validation(self):
+        self.data["doctors"][0]["preferences"]["requested_days"] = [32]
 
         with self.assertRaises(ValueError):
             InputSerializer.model_validate(self.data)
 
-        self.data["doctors"][0]["preferences"]["preferred_days"] = [0]
+        self.data["doctors"][0]["preferences"]["requested_days"] = [0]
 
         with self.assertRaises(ValueError):
             InputSerializer.model_validate(self.data)

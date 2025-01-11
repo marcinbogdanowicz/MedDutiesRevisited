@@ -30,7 +30,7 @@ class DoctorsDutyPreferences:
         month: int,
         year: int,
         exceptions: Sequence[int],
-        preferred_days: Sequence[int],
+        requested_days: Sequence[int],
         preferred_weekdays: Sequence[int],
         preferred_positions: Sequence[int],
         maximum_accepted_duties: int,
@@ -39,7 +39,7 @@ class DoctorsDutyPreferences:
         self.year = year
 
         self.exceptions = exceptions
-        self.preferred_days = preferred_days
+        self.requested_days = requested_days
         self.preferred_weekdays = preferred_weekdays
         self.preferred_positions = preferred_positions
         self.maximum_accepted_duties = maximum_accepted_duties

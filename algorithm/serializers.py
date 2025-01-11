@@ -15,7 +15,7 @@ class DutySerializer(BaseModel):
 
 class PreferencesSerializer(BaseModel):
     exceptions: list[int]
-    preferred_days: list[int]
+    requested_days: list[int]
     preferred_weekdays: list[int]
     preferred_positions: list[int]
     maximum_accepted_duties: int
@@ -101,9 +101,9 @@ class InputSerializer(BaseModel):
         return self
 
     @model_validator(mode='after')
-    def validate_preferred_days(self) -> Self:
+    def validate_requested_days(self) -> Self:
         self._validate_provided_dates_are_within_months_length(
-            self.month, self.year, date_list_doctor_attr='preferences.preferred_days'
+            self.month, self.year, date_list_doctor_attr='preferences.requested_days'
         )
         return self
 
