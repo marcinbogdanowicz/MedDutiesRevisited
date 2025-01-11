@@ -56,3 +56,7 @@ def input_factory(
         "doctors": doctors,
         "duties": duties,
     }
+
+
+class ExpectedError(Exception):
+    pass

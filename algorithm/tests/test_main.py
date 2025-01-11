@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from algorithm.main import create_duty_setter, main, validate_data
-from algorithm.tests.data import input_factory
+from algorithm.tests.utils import input_factory
 from algorithm.utils import get_number_of_days_in_month
 
 

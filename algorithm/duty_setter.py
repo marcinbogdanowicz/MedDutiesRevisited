@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import Schedule
 
 if TYPE_CHECKING:
@@ -21,6 +22,8 @@ class Result:
 
 
 class DutySetter:
+    validator_classes = []
+
     def __init__(self, year: int, month: int, doctors_per_duty: int) -> None:
         self.duty_positions = doctors_per_duty
         self.schedule = Schedule(month, year, self.duty_positions)
@@ -34,7 +37,24 @@ class DutySetter:
         return next((doctor for doctor in self.doctors if doctor.pk == pk), None)
 
     def set_duties(self) -> None:
-        pass  # TODO: Implement setting duties.
+        # In JS version we used to clear duties first. TODO: check if we need to.
+        # We used to clear log here - TODO check if we need to.
+
+        can_be_set = self.check_if_duties_can_be_set()
+        if not can_be_set:
+            return
+
+        # TODO: Finish
 
     def get_result(self) -> Result:
         pass  # TODO Implement
+
+    def check_if_duties_can_be_set(self) -> None:
+        errors = []
+
+        for validator_class in self.validator_classes:
+            validator = validator_class(self.schedule, self.doctors)
+            try:
+                validator.run()
+            except CantSetDutiesError as exc:
+                errors.extend(exc.errors)

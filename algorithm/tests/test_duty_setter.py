@@ -1,7 +1,10 @@
+from contextlib import suppress
 from unittest import TestCase
+from unittest.mock import Mock, call, patch
 
 from algorithm.doctor import Doctor
 from algorithm.duty_setter import DutySetter
+from algorithm.tests.utils import ExpectedError
 
 
 class DutySetterTests(TestCase):
@@ -34,3 +37,22 @@ class DutySetterTests(TestCase):
 
         doctor = setter.get_doctor(3)
         self.assertIsNone(doctor)
+
+    @patch('algorithm.duty_setter.DutySetter.check_if_duties_can_be_set', side_effect=ExpectedError)
+    def test_validation_is_run_before_setting_duties(self, mock_check_if_duties_can_be_set):
+        setter = DutySetter(2025, 1, 3)
+
+        with suppress(ExpectedError):
+            setter.set_duties()
+
+        mock_check_if_duties_can_be_set.assert_called_once()
+
+    def test_validation(self):
+        setter = DutySetter(2025, 1, 3)
+
+        mock_validator = Mock()
+        with patch.object(setter, 'validator_classes', new=[mock_validator]):
+            setter.check_if_duties_can_be_set()
+
+        self.assertEqual(2, len(mock_validator.mock_calls))
+        self.assertIn(call().run(), mock_validator.mock_calls)

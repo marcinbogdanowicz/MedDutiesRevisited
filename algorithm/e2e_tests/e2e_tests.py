@@ -5,7 +5,7 @@ from typing import Any
 from unittest import TestCase
 
 from algorithm.main import main
-from algorithm.tests.data import input_factory
+from algorithm.tests.utils import input_factory
 
 
 class E2ETests(TestCase):

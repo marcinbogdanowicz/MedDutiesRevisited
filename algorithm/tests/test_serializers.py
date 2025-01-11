@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from algorithm.serializers import InputSerializer
-from algorithm.tests.data import input_factory
+from algorithm.tests.utils import input_factory
 from algorithm.utils import get_max_number_of_duties_for_month
 
 
