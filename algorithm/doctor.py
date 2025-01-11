@@ -20,6 +20,9 @@ class Doctor:
     def init_preferences(self, **kwargs) -> None:
         self.preferences = DoctorsDutyPreferences(**kwargs)
 
+    def __str__(self) -> str:
+        return f'Doctor {self.name} (pk={self.pk})'
+
 
 class DoctorsDutyPreferences:
     def __init__(
