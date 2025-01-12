@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections import defaultdict
+from functools import cached_property
 from typing import TYPE_CHECKING
 
 from algorithm.exceptions import CantSetDutiesError
+from algorithm.utils import comma_join
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
@@ -57,8 +60,9 @@ class PreferencesCoherenceValidator(BaseDutySettingValidator):
                 requested_doubles.append(f'{day} and {day + 1}')
 
         if requested_doubles:
-            doubles_str = ", ".join(requested_doubles)
-            self.errors.append(f'{doctor} requested double duties on the following days: {doubles_str}')
+            self.errors.append(
+                f'{doctor} requested double duties on the following days: {comma_join(requested_doubles)}'
+            )
 
     def _validate_no_coincidence_with_exceptions(self, doctor: Doctor) -> None:
         preferences = doctor.preferences
@@ -69,8 +73,7 @@ class PreferencesCoherenceValidator(BaseDutySettingValidator):
                 conflicts.append(day)
 
         if conflicts:
-            conflicts_str = ', '.join(str(day) for day in conflicts)
-            self.errors.append(f'{doctor} requests and excludes duties on the following dates: {conflicts_str}')
+            self.errors.append(f'{doctor} requests and excludes duties on the following dates: {comma_join(conflicts)}')
 
     def _validate_enough_duties_are_accepted(self, doctor: Doctor) -> None:
         preferences = doctor.preferences
@@ -81,3 +84,80 @@ class PreferencesCoherenceValidator(BaseDutySettingValidator):
                 f'{doctor} requests duties on {requested_days_count} days, but would accept only '
                 f'{preferences.maximum_accepted_duties} duties.'
             )
+
+
+class RequestedDaysConflictsValidator(BaseDutySettingValidator):
+    def __init__(self, schedule, doctors) -> None:
+        super().__init__(schedule, doctors)
+        self._doctors_who_requested_each_day = self._get_doctors_who_requested_each_day()
+
+    def perform_validation(self) -> None:
+        self._validate_already_filled_days()
+        self._validate_requested_days_can_be_granted()
+
+    def _get_doctors_who_requested_each_day(self) -> dict[int, list[Doctor]]:
+        result = defaultdict(list)
+        for doctor in self.doctors:
+            for day_number in doctor.preferences.requested_days:
+                result[day_number].append(doctor)
+
+        return result
+
+    def _validate_already_filled_days(self) -> None:
+        requested_days_which_were_already_filled_by_user = set(self._doctors_who_requested_each_day.keys()) & set(
+            self._filled_days
+        )
+        for day_number in requested_days_which_were_already_filled_by_user:
+            doctors_who_requested_this_day = self._doctors_who_requested_each_day[day_number]
+            self.errors.append(
+                f'{comma_join(doctors_who_requested_this_day)} requested duties on day {day_number}, '
+                'but it was already filled by user.'
+            )
+
+    def _validate_requested_days_can_be_granted(self) -> None:
+        requested_days_not_filled_by_user = set(self._doctors_who_requested_each_day.keys()) - set(self._filled_days)
+
+        for day_number in requested_days_not_filled_by_user:
+            if not self._can_duties_on_requested_day_be_granted(day_number):
+                doctors_who_requested_duties = self._doctors_who_requested_each_day[day_number]
+                self.errors.append(
+                    f'Duty on day {day_number} was requested by {comma_join(doctors_who_requested_duties)}, '
+                    'but there are not enough positions available (due to requesting doctors count, positions conflicts '
+                    'or already set duties).'
+                )
+
+    def _can_duties_on_requested_day_be_granted(self, day_number: int) -> bool:
+        doctors_who_requested_duties = self._doctors_who_requested_each_day[day_number].copy()
+        doctors_who_requested_duties.sort(key=lambda doctor: len(doctor.preferences.preferred_positions))
+
+        filled_or_requested_positions = self._filled_positions_daily[day_number].copy()
+
+        for doctors_count, doctor in enumerate(
+            doctors_who_requested_duties,
+            start=len(filled_or_requested_positions) + 1,  # One for the current doctor
+        ):
+            filled_or_requested_positions |= set(doctor.preferences.preferred_positions)
+            if doctors_count > len(filled_or_requested_positions):
+                return False
+
+        return True
+
+    @cached_property
+    def _filled_positions_daily(self) -> dict[int, set[int]]:
+        filled_positions = defaultdict(set)
+        for duty in self.schedule.duties():
+            if duty.doctor and duty.set_by_user:
+                filled_positions[duty.day.number].add(duty.position)
+
+        return filled_positions
+
+    @cached_property
+    def _filled_days(self) -> list[int]:
+        def all_positions_filled(position_list):
+            return len(position_list) == len(self.schedule.position_numbers)
+
+        return [
+            day_number
+            for day_number, filled_positions in self._filled_positions_daily.items()
+            if all_positions_filled(filled_positions)
+        ]

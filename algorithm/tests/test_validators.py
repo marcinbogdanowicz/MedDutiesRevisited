@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from algorithm.duty_setter import DutySetter
 from algorithm.tests.utils import doctor_factory
-from algorithm.validators import DoctorCountValidator, PreferencesCoherenceValidator
+from algorithm.validators import DoctorCountValidator, PreferencesCoherenceValidator, RequestedDaysConflictsValidator
 
 
 class DoctorCountValidatorTests(TestCase):
@@ -86,3 +86,91 @@ class PreferencesCoherenceValidatorTests(TestCase):
 
         errors = self.duty_setter._run_validator(PreferencesCoherenceValidator)
         self.assertIn('requests duties on 3 days, but would accept only 2 duties.', errors[0])
+
+
+class RequestedDaysConflictsValidatorTests(TestCase):
+    def setUp(self):
+        self.year = 2025
+        self.month = 1
+        self.duty_setter = DutySetter(self.year, self.month, 3)
+
+        self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4 = doctor_factory(4)
+        self.duty_setter.add_doctor(self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4)
+
+    def get_kwargs(self):
+        return {
+            "year": self.year,
+            "month": self.month,
+            "exceptions": [],
+            "preferred_weekdays": list(range(7)),
+            "maximum_accepted_duties": 15,
+        }
+
+    def test_conflicts_same_position(self):
+        self.doctor_1.init_preferences(requested_days=[5], preferred_positions=[1], **self.get_kwargs())
+        self.doctor_2.init_preferences(requested_days=[5], preferred_positions=[1], **self.get_kwargs())
+        self.doctor_3.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+        self.doctor_4.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('Duty on day 5', errors[0])
+        self.assertIn('there are not enough positions available', errors[0])
+
+    def test_no_conflicts_same_position(self):
+        self.doctor_1.init_preferences(requested_days=[5], preferred_positions=[2], **self.get_kwargs())
+        self.doctor_2.init_preferences(requested_days=[5], preferred_positions=[1], **self.get_kwargs())
+        self.doctor_3.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+        self.doctor_4.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(0, len(errors))
+
+    def test_conflicts_mixed_positions(self):
+        self.doctor_1.init_preferences(requested_days=[5], preferred_positions=[1, 2, 3], **self.get_kwargs())
+        self.doctor_2.init_preferences(requested_days=[5], preferred_positions=[1, 3], **self.get_kwargs())
+        self.doctor_3.init_preferences(requested_days=[5], preferred_positions=[2, 3], **self.get_kwargs())
+        self.doctor_4.init_preferences(requested_days=[5], preferred_positions=[1], **self.get_kwargs())
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('Duty on day 5', errors[0])
+        self.assertIn('there are not enough positions available', errors[0])
+
+    def test_conflicts_position_ordering(self):
+        self.doctor_1.init_preferences(requested_days=[5], preferred_positions=[1], **self.get_kwargs())
+        self.doctor_2.init_preferences(requested_days=[5], preferred_positions=[1, 2, 3], **self.get_kwargs())
+        self.doctor_3.init_preferences(requested_days=[5], preferred_positions=[1], **self.get_kwargs())
+        self.doctor_4.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('Duty on day 5', errors[0])
+        self.assertIn('there are not enough positions available', errors[0])
+
+    def test_conflicts_with_duties_set(self):
+        self.doctor_1.init_preferences(requested_days=[5], preferred_positions=[1, 2, 3], **self.get_kwargs())
+        self.doctor_2.init_preferences(requested_days=[5], preferred_positions=[1, 3], **self.get_kwargs())
+        self.doctor_3.init_preferences(requested_days=[], preferred_positions=[2, 3], **self.get_kwargs())
+        self.doctor_4.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+
+        self.duty_setter.schedule[5, 2].update(doctor=self.doctor_3, set_by_user=True)
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(0, len(errors))
+
+        self.doctor_4.preferences.requested_days.append(5)
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('Duty on day 5', errors[0])
+        self.assertIn('there are not enough positions available', errors[0])
+
+    def test_no_conflicts(self):
+        self.doctor_1.init_preferences(requested_days=[5], preferred_positions=[2, 3], **self.get_kwargs())
+        self.doctor_2.init_preferences(requested_days=[5], preferred_positions=[1, 3], **self.get_kwargs())
+        self.doctor_3.init_preferences(requested_days=[5], preferred_positions=[2], **self.get_kwargs())
+        self.doctor_4.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
+
+        errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
+        self.assertEqual(0, len(errors))

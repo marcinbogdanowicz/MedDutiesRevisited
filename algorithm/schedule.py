@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import TYPE_CHECKING, Any
+from itertools import chain
+from typing import TYPE_CHECKING, Any, Iterator
 
 from algorithm.enums import DayCategory, StrainPoints, Weekday
 from algorithm.utils import get_holidays, get_number_of_days_in_month, get_week_number_in_month
@@ -121,6 +122,9 @@ class Schedule:
 
     def __len__(self):
         return len(self._cells)
+
+    def duties(self) -> Iterator[Duty]:
+        return chain(*[row.values() for row in self._cells.values()])
 
     def to_list(self) -> list[dict[str, Any]]:
         pass  # TODO

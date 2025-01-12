@@ -4,7 +4,7 @@ import calendar
 from collections import defaultdict
 from contextlib import suppress
 from functools import reduce
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Sequence
 
 if TYPE_CHECKING:
     from datetime import date
@@ -29,6 +29,10 @@ def recursive_getattr(obj, attr, default=None):
         return reduce(getattr, [obj] + attr.split('.'))
 
     return default
+
+
+def comma_join(objects: Sequence[Any]) -> str:
+    return ", ".join(str(obj) for obj in objects)
 
 
 def get_holidays() -> dict[int, dict[int, list[int]]]:
