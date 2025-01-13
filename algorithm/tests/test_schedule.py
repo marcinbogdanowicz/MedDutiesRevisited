@@ -1,51 +1,68 @@
 from unittest import TestCase
 
 from algorithm.enums import DayCategory, StrainPoints
-from algorithm.schedule import Day, Duty, Schedule
+from algorithm.schedule import Day, Duty, DutySchedule
 from algorithm.tests.utils import doctor_factory
 
 
-class ScheduleTests(TestCase):
+class DutyScheduleTests(TestCase):
     def test_schedule_init(self):
-        schedule = Schedule(1, 2025, 3)
+        schedule = DutySchedule(1, 2025, 3)
 
-        day_rows = schedule._cells
-        self.assertEqual(31, len(day_rows))
-        self.assertTrue(all(len(position_cols) == 3 for position_cols in day_rows.values()))
+        self.assertEqual(31, schedule.days)
+        self.assertEqual(3, schedule.positions)
+
+        self.assertEqual(31, len(schedule))
+        self.assertTrue(all(len(row) == 3 for row in schedule))
 
     def test_accessing_cells(self):
-        schedule = Schedule(1, 2025, 3)
+        schedule = DutySchedule(1, 2025, 3)
 
         duty = schedule[1, 3]
         self.assertEqual(1, duty.day.number)
         self.assertEqual(3, duty.position)
 
-    def test_immutability(self):
-        schedule = Schedule(1, 2025, 3)
+        self.assertEqual(duty, schedule[1][3])
 
-        with self.assertRaises(AttributeError):
-            schedule[31, 1] = 'tomato'
-
-    def test_acessing_errors(self):
-        schedule = Schedule(1, 2025, 3)
-
-        with self.assertRaises(TypeError):
-            schedule[0]
-
-        with self.assertRaises(ValueError):
-            schedule[1, 2, 3]
-
-        with self.assertRaises(TypeError):
-            schedule[1:8]
+    def test_accessing_cells_errors(self):
+        schedule = DutySchedule(1, 2025, 3)
 
         with self.assertRaises(KeyError):
             schedule[0, 2]
 
         with self.assertRaises(KeyError):
-            schedule[32, 1]
+            schedule[32, 2]
 
         with self.assertRaises(KeyError):
-            schedule[2, 4]
+            schedule[3, 0]
+
+        with self.assertRaises(KeyError):
+            schedule[3, 4]
+
+        with self.assertRaises(KeyError):
+            schedule[1:3]
+
+    def test_immutability(self):
+        schedule = DutySchedule(1, 2025, 3)
+
+        with self.assertRaises(AttributeError):
+            schedule[1] = ['duty', 'duty', 'duty']
+
+        row = schedule[1]
+        with self.assertRaises(AttributeError):
+            row[2] = 'duty'
+
+        with self.assertRaises(AttributeError):
+            schedule[1, 3] = 'duty'
+
+    def test_cells_iterator(self):
+        schedule = DutySchedule(1, 2025, 3)
+
+        cells = list(schedule.cells())
+        self.assertEqual(93, len(cells))
+
+        unique_days_and_positions = {(cell.day.number, cell.position) for cell in cells}
+        self.assertEqual(len(unique_days_and_positions), len(cells))
 
 
 class DayTests(TestCase):

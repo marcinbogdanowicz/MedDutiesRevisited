@@ -10,11 +10,11 @@ from algorithm.utils import comma_join
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
-    from algorithm.schedule import Schedule
+    from algorithm.schedule import DutySchedule
 
 
 class BaseDutySettingValidator(ABC):
-    def __init__(self, schedule: Schedule, doctors: list[Doctor]) -> None:
+    def __init__(self, schedule: DutySchedule, doctors: list[Doctor]) -> None:
         self.schedule = schedule
         self.doctors = doctors
 
@@ -33,10 +33,9 @@ class BaseDutySettingValidator(ABC):
 
 class DoctorCountValidator(BaseDutySettingValidator):
     def perform_validation(self) -> None:
-        positions_count = len(self.schedule.position_numbers)
         doctors_count = len(self.doctors)
+        minimum_doctors_count = self.schedule.positions * 2
 
-        minimum_doctors_count = positions_count * 2
         if doctors_count < minimum_doctors_count:
             self.errors.append(
                 f'There are not enough doctors to fill all positions. Minimum required: {minimum_doctors_count}, '
@@ -145,7 +144,7 @@ class RequestedDaysConflictsValidator(BaseDutySettingValidator):
     @cached_property
     def _filled_positions_daily(self) -> dict[int, set[int]]:
         filled_positions = defaultdict(set)
-        for duty in self.schedule.duties():
+        for duty in self.schedule.cells():
             if duty.doctor and duty.set_by_user:
                 filled_positions[duty.day.number].add(duty.position)
 
@@ -154,7 +153,7 @@ class RequestedDaysConflictsValidator(BaseDutySettingValidator):
     @cached_property
     def _filled_days(self) -> list[int]:
         def all_positions_filled(position_list):
-            return len(position_list) == len(self.schedule.position_numbers)
+            return len(position_list) == self.schedule.positions
 
         return [
             day_number
