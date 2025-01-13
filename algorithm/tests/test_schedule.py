@@ -18,32 +18,42 @@ class DutyScheduleTests(TestCase):
     def test_accessing_cells(self):
         schedule = DutySchedule(1, 2025, 3)
 
-        duty = schedule.get(1, 3)
+        duty = schedule[1, 3]
         self.assertEqual(1, duty.day.number)
         self.assertEqual(3, duty.position)
 
-        self.assertEqual(duty, schedule[0][2])
+        self.assertEqual(duty, schedule[1][3])
 
     def test_accessing_cells_errors(self):
         schedule = DutySchedule(1, 2025, 3)
 
         with self.assertRaises(KeyError):
-            schedule.get(0, 2)
+            schedule[0, 2]
 
         with self.assertRaises(KeyError):
-            schedule.get(32, 2)
+            schedule[32, 2]
 
         with self.assertRaises(KeyError):
-            schedule.get(3, 0)
+            schedule[3, 0]
 
         with self.assertRaises(KeyError):
-            schedule.get(3, 4)
+            schedule[3, 4]
+
+        with self.assertRaises(KeyError):
+            schedule[1:3]
 
     def test_immutability(self):
         schedule = DutySchedule(1, 2025, 3)
 
         with self.assertRaises(AttributeError):
-            schedule[0] = ['duty', 'duty', 'duty']
+            schedule[1] = ['duty', 'duty', 'duty']
+
+        row = schedule[1]
+        with self.assertRaises(AttributeError):
+            row[2] = 'duty'
+
+        with self.assertRaises(AttributeError):
+            schedule[1, 3] = 'duty'
 
     def test_cells_iterator(self):
         schedule = DutySchedule(1, 2025, 3)

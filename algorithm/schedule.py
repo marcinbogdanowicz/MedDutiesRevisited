@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from datetime import date
 from itertools import chain
 from typing import TYPE_CHECKING, Any, Iterator
@@ -62,19 +62,51 @@ class Day:
     def _is_holiday(self) -> bool:
         return self.number in HOLIDAYS[self.year][self.month]
 
-    def __str__(self) -> str:
-        return f'Day {self.number}/{self.month}/{self.year}'
+    def __repr__(self) -> str:
+        return f'{self.number}/{self.month}/{self.year}'
 
 
-class Cell(ABC):
-    def __init__(self, day: Day, position: int) -> None:
-        self.day = day
-        self.position = position
+class ContainerSequence(ABC):
+    _members: dict[int, Any]
+
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @property
+    @abstractmethod
+    def member_class(self) -> type:
+        pass
+
+    def __getitem__(self, key: int) -> Any:
+        if isinstance(key, int):
+            return self._members[key]
+
+        raise KeyError(f'Unsupported key: {key}')
+
+    def __setitem__(self, key: Any, new_value: Any) -> None:
+        raise AttributeError(
+            f'{self.__class__.__name__} is immutable. Retrieve the desired element and update it instead.'
+        )
+
+    def __iter__(self) -> Iterator[Any]:
+        return (elem for elem in self._members.values())
+
+    def __len__(self) -> int:
+        return len(self._members)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}: {list(self)}'
 
 
-class Schedule(ABC):
-    cell_class: Cell
+class ScheduleRow(ContainerSequence, ABC):
+    def __init__(self, day: Day, positions: int) -> None:
+        self._members = {
+            position: self.member_class(day=day, position=position) for position in range(1, positions + 1)
+        }
 
+
+class Schedule(ContainerSequence, ABC):
     def __init__(self, month: int, year: int, positions: int) -> None:
         self.month = month
         self.year = year
@@ -82,33 +114,29 @@ class Schedule(ABC):
         self.days = get_number_of_days_in_month(month, year)
         self.positions = positions
 
-        self._schedule = [
-            [
-                self.cell_class(day=Day(row + 1, self.month, self.year), position=col + 1)
-                for col in range(self.positions)
-            ]
-            for row in range(self.days)
-        ]
+        self._members = {
+            day_number: self.member_class(
+                day=Day(day_number, self.month, self.year),
+                positions=self.positions,
+            )
+            for day_number in range(1, self.days + 1)
+        }
 
-    def __getitem__(self, key: int) -> Cell:
-        if isinstance(key, int):
-            return self._schedule[key]
+    def __getitem__(self, key: int | tuple[int, int]) -> Any:
+        if isinstance(key, tuple) and len(key) == 2:
+            day, position = key
+            return self._members[day][position]
 
-        raise KeyError(f'Unsupported {self.__class__.__name__} row key: {key}.')
+        return super().__getitem__(key)
 
-    def __setitem__(self, key: Any, new_value: Any) -> None:
-        raise AttributeError(
-            f'{self.__class__.__name__} cells are immutable. Retrieve the desired cell and update it instead.'
-        )
 
-    def __len__(self) -> int:
-        return len(self._schedule)
+class Cell:
+    def __init__(self, day: Day, position: int) -> None:
+        self.day = day
+        self.position = position
 
-    def get(self, day: int, position: int) -> Cell:
-        if 0 < day <= self.days and 0 < position <= self.positions:
-            return self._schedule[day - 1][position - 1]
-
-        raise KeyError(f'{self.__class__.__name__} doesn\'t include day {day}, position {position}.')
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.day}, {self.position})'
 
 
 class Duty(Cell):
@@ -118,8 +146,8 @@ class Duty(Cell):
         self.strain_points = day.strain_points
         self.set_by_user = set_by_user
 
-        self.pk = None
         self.doctor = None
+        self.pk = None
 
     def update(
         self,
@@ -139,17 +167,29 @@ class Duty(Cell):
         if pk is not None:
             self.pk = pk
 
+    def __repr__(self) -> str:
+        return f'{super().__repr__()}: {self.doctor}'
+
+
+class DutyRow(ScheduleRow):
+    member_class = Duty
+
 
 class DutySchedule(Schedule):
-    cell_class = Duty
+    member_class = DutyRow
 
     def cells(self) -> Iterator[Duty]:
-        return chain(*self._schedule)
+        return chain(*self)
 
 
 class PreferencesList(Cell, list):
-    pass
+    def __repr__(self) -> str:
+        return f'{super().__repr__()}: {list.__repr__(self)}'
+
+
+class PreferencesRow(ScheduleRow):
+    member_class = PreferencesList
 
 
 class PreferencesSchedule(Schedule):
-    cell_class = PreferencesList
+    member_class = PreferencesRow

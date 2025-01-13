@@ -35,7 +35,7 @@ class MainFunctionTests(TestCase):
             day = duty_data["day"]
             position = duty_data["position"]
 
-            duty = schedule.get(day, position)
+            duty = schedule[day, position]
             self.assertEqual(duty.day.number, day)
             self.assertEqual(duty.position, position)
             self.assertEqual(duty.doctor.pk, duty_data["doctor_pk"])
