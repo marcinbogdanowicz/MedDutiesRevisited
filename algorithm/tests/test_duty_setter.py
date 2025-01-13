@@ -13,8 +13,8 @@ class DutySetterTests(TestCase):
         self.assertIsNotNone(setter.schedule)
 
         schedule = setter.schedule
-        self.assertEqual(31, len(schedule.day_numbers))
-        self.assertEqual(3, len(schedule.position_numbers))
+        self.assertEqual(31, schedule.days)
+        self.assertEqual(3, schedule.positions)
 
     def test_adding_doctors(self):
         doctor_1, doctor_2 = doctor_factory(2)

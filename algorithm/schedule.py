@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC
 from datetime import date
 from itertools import chain
 from typing import TYPE_CHECKING, Any, Iterator
@@ -65,10 +66,55 @@ class Day:
         return f'Day {self.number}/{self.month}/{self.year}'
 
 
-class Duty:
-    def __init__(self, day: Day, position: int, set_by_user: bool = False) -> None:
+class Cell(ABC):
+    def __init__(self, day: Day, position: int) -> None:
         self.day = day
         self.position = position
+
+
+class Schedule(ABC):
+    cell_class: Cell
+
+    def __init__(self, month: int, year: int, positions: int) -> None:
+        self.month = month
+        self.year = year
+
+        self.days = get_number_of_days_in_month(month, year)
+        self.positions = positions
+
+        self._schedule = [
+            [
+                self.cell_class(day=Day(row + 1, self.month, self.year), position=col + 1)
+                for col in range(self.positions)
+            ]
+            for row in range(self.days)
+        ]
+
+    def __getitem__(self, key: int) -> Cell:
+        if isinstance(key, int):
+            return self._schedule[key]
+
+        raise KeyError(f'Unsupported {self.__class__.__name__} row key: {key}.')
+
+    def __setitem__(self, key: Any, new_value: Any) -> None:
+        raise AttributeError(
+            f'{self.__class__.__name__} cells are immutable. Retrieve the desired cell and update it instead.'
+        )
+
+    def __len__(self) -> int:
+        return len(self._schedule)
+
+    def get(self, day: int, position: int) -> Cell:
+        if 0 < day <= self.days and 0 < position <= self.positions:
+            return self._schedule[day - 1][position - 1]
+
+        raise KeyError(f'{self.__class__.__name__} doesn\'t include day {day}, position {position}.')
+
+
+class Duty(Cell):
+    def __init__(self, day: Day, position: int, set_by_user: bool = False) -> None:
+        super().__init__(day, position)
+
         self.strain_points = day.strain_points
         self.set_by_user = set_by_user
 
@@ -94,37 +140,16 @@ class Duty:
             self.pk = pk
 
 
-class Schedule:
-    def __init__(self, month: int, year: int, positions: int) -> None:
-        self.month = month
-        self.year = year
+class DutySchedule(Schedule):
+    cell_class = Duty
 
-        number_of_days = get_number_of_days_in_month(month, year)
-        self.day_numbers = range(1, number_of_days + 1)
-        self.position_numbers = range(1, positions + 1)
-        self._cells = {
-            day_number: {
-                position_number: Duty(
-                    day=Day(day_number, self.month, self.year),
-                    position=position_number,
-                )
-                for position_number in self.position_numbers
-            }
-            for day_number in self.day_numbers
-        }
+    def cells(self) -> Iterator[Duty]:
+        return chain(*self._schedule)
 
-    def __getitem__(self, key: int | tuple[int, int]) -> Any:
-        day, position = key
-        return self._cells[day][position]
 
-    def __setitem__(self, key: Any, new_value: Any) -> None:
-        raise AttributeError('Schedule items are immutable. Retrieve the desired duty and update it instead.')
+class PreferencesList(Cell, list):
+    pass
 
-    def __len__(self):
-        return len(self._cells)
 
-    def duties(self) -> Iterator[Duty]:
-        return chain(*[row.values() for row in self._cells.values()])
-
-    def to_list(self) -> list[dict[str, Any]]:
-        pass  # TODO
+class PreferencesSchedule(Schedule):
+    cell_class = PreferencesList

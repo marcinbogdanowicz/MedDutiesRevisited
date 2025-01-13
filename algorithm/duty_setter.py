@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from algorithm.exceptions import CantSetDutiesError
-from algorithm.schedule import Schedule
+from algorithm.schedule import DutySchedule
 from algorithm.validators import DoctorCountValidator, PreferencesCoherenceValidator, RequestedDaysConflictsValidator
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ class Result:
     were_any_duties_set: bool
     were_all_duties_set: bool
     errors: list[str]
-    duties: Schedule
+    duties: DutySchedule
 
     def to_dict(self) -> dict[str, Any]:
         return {}  # TODO implement
@@ -28,7 +28,7 @@ class DutySetter:
 
     def __init__(self, year: int, month: int, doctors_per_duty: int) -> None:
         self.duty_positions = doctors_per_duty
-        self.schedule = Schedule(month, year, self.duty_positions)
+        self.schedule = DutySchedule(month, year, self.duty_positions)
 
         self.doctors = []
 

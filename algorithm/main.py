@@ -34,7 +34,7 @@ def create_duty_setter(validated_data: dict[str, Any]) -> DutySetter:
         position = duty_data.pop("position")
 
         doctor = duty_setter.get_doctor(doctor_pk)
-        schedule[day, position].update(doctor, **duty_data)
+        schedule.get(day, position).update(doctor, **duty_data)
 
     return duty_setter
 

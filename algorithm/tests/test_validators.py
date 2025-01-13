@@ -154,7 +154,7 @@ class RequestedDaysConflictsValidatorTests(TestCase):
         self.doctor_3.init_preferences(requested_days=[], preferred_positions=[2, 3], **self.get_kwargs())
         self.doctor_4.init_preferences(requested_days=[], preferred_positions=[1, 2, 3], **self.get_kwargs())
 
-        self.duty_setter.schedule[5, 2].update(doctor=self.doctor_3, set_by_user=True)
+        self.duty_setter.schedule.get(5, 2).update(doctor=self.doctor_3, set_by_user=True)
 
         errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
         self.assertEqual(0, len(errors))

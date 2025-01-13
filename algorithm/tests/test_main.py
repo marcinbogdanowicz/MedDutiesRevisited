@@ -28,14 +28,14 @@ class MainFunctionTests(TestCase):
         self.assertEqual(schedule.year, input_data["year"])
         self.assertEqual(schedule.month, input_data["month"])
         expected_days_count = get_number_of_days_in_month(input_data["month"], input_data["year"])
-        self.assertEqual(expected_days_count, len(schedule.day_numbers))
-        self.assertEqual(input_data["doctors_per_duty"], len(schedule.position_numbers))
+        self.assertEqual(expected_days_count, schedule.days)
+        self.assertEqual(input_data["doctors_per_duty"], schedule.positions)
 
         for duty_data in input_data["duties"]:
             day = duty_data["day"]
             position = duty_data["position"]
 
-            duty = schedule[day, position]
+            duty = schedule.get(day, position)
             self.assertEqual(duty.day.number, day)
             self.assertEqual(duty.position, position)
             self.assertEqual(duty.doctor.pk, duty_data["doctor_pk"])
