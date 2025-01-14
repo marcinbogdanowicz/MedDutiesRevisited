@@ -3,13 +3,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import date
 from itertools import chain
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import Any, Iterator
 
+from algorithm.doctor import Doctor
 from algorithm.enums import DayCategory, StrainPoints, Weekday
 from algorithm.utils import get_holidays, get_number_of_days_in_month, get_week_number_in_month
-
-if TYPE_CHECKING:
-    from algorithm.doctor import Doctor
 
 HOLIDAYS = get_holidays()
 
@@ -101,6 +99,7 @@ class ContainerSequence(ABC):
 
 class ScheduleRow(ContainerSequence, ABC):
     def __init__(self, day: Day, positions: int) -> None:
+        self.day = day
         self._members = {
             position: self.member_class(day=day, position=position) for position in range(1, positions + 1)
         }
@@ -136,7 +135,7 @@ class Cell:
         self.position = position
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.day}, {self.position})'
+        return f'{self.__class__.__name__} ({self.day}, {self.position})'
 
 
 class Duty(Cell):
@@ -148,6 +147,12 @@ class Duty(Cell):
 
         self.doctor = None
         self.pk = None
+
+    def __contains__(self, item: Any) -> bool:
+        if isinstance(item, Doctor):
+            return item == self.doctor
+
+        raise KeyError(f'{item} is not a {Doctor.__name__} instance')
 
     def update(
         self,
@@ -174,6 +179,9 @@ class Duty(Cell):
 class DutyRow(ScheduleRow):
     member_class = Duty
 
+    def has_duty(self, doctor: Doctor) -> bool:
+        return any(doctor in duty for duty in self)
+
 
 class DutySchedule(Schedule):
     member_class = DutyRow
@@ -182,14 +190,14 @@ class DutySchedule(Schedule):
         return chain(*self)
 
 
-class PreferencesList(Cell, list):
+class AvailableDoctorList(Cell, list):
     def __repr__(self) -> str:
         return f'{super().__repr__()}: {list.__repr__(self)}'
 
 
-class PreferencesRow(ScheduleRow):
-    member_class = PreferencesList
+class DoctorAvailabilityScheduleRow(ScheduleRow):
+    member_class = AvailableDoctorList
 
 
-class PreferencesSchedule(Schedule):
-    member_class = PreferencesRow
+class DoctorAvailabilitySchedule(Schedule):
+    member_class = DoctorAvailabilityScheduleRow

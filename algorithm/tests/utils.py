@@ -62,8 +62,8 @@ def input_factory(
 def doctor_factory(count=1, /, **kwargs):
     def get_init_data():
         return {
-            "name": kwargs.get('name', faker.name()),
-            "pk": kwargs.get('pk', faker.unique.random_int(min=1)),
+            "name": kwargs.get('name', faker.first_name()),
+            "pk": kwargs.get('pk', faker.unique.random_int(min=1, max=99)),
             "last_month_duties": kwargs.get('last_month_duties', []),
             "next_month_duties": kwargs.get('next_month_duties', []),
         }

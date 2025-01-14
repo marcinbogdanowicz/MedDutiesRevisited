@@ -9,6 +9,9 @@ from typing import TYPE_CHECKING, Any, Sequence
 if TYPE_CHECKING:
     from datetime import date
 
+    from algorithm.doctor import Doctor
+    from algorithm.schedule import DoctorAvailabilitySchedule, DutySchedule
+
 
 def get_week_number_in_month(date: date) -> int:
     week_of_year_number = date.isocalendar()[1]
@@ -111,3 +114,47 @@ def get_holidays() -> dict[int, dict[int, list[int]]]:
     holidays[2032][11].extend([12])
 
     return holidays
+
+
+class DoctorAvailabilityHelper:
+    """
+    Considerations:
+    - if doctor has a user-set duty on one position, shouldn't he be removed from other positions?
+    - if doctor has a user-set duty on one position, shouldn't all other doctors be removed from this position?
+    - if doctor has a user-set duty on a day he wouldn't prefer (e.g. on an excluded weekday),
+      he isn't included - maybe he should?
+    - however, if doctor requests a duty on a weekday he doesn't prefer, he will be included
+      (which is inconsistent with other preferences and with the doctor being given a duty manually on this day)
+    - when doctor has a user-set duty on position he doesn't prefer, he will be available on the preferred position,
+      but not on the one he is set at...
+    """
+
+    def __init__(self, doctors: list[Doctor], duty_schedule: DutySchedule) -> None:
+        self.doctors = doctors
+        self.duty_schedule = duty_schedule
+
+    def get_availability_schedule(self) -> DoctorAvailabilitySchedule:
+        from algorithm.schedule import DoctorAvailabilitySchedule
+
+        availability_schedule = DoctorAvailabilitySchedule(
+            self.duty_schedule.month, self.duty_schedule.year, self.duty_schedule.positions
+        )
+
+        for doctor in self.doctors:
+            for row in availability_schedule:
+                day = row.day
+                if not self._has_doctor_received_conflicting_duties(
+                    doctor, day.number
+                ) and doctor.preferences.can_accept_duty_on_day(day):
+                    for position in doctor.preferences.preferred_positions:
+                        availability_schedule[day.number, position].append(doctor)
+
+        return availability_schedule
+
+    def _has_doctor_received_conflicting_duties(self, doctor: Doctor, day_number: int) -> bool:
+        for day in [day_number - 1, day_number + 1]:
+            with suppress(KeyError):
+                if self.duty_schedule[day].has_duty(doctor):
+                    return True
+
+        return False

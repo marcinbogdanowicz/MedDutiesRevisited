@@ -1,4 +1,9 @@
-from typing import Sequence
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Sequence
+
+if TYPE_CHECKING:
+    from algorithm.schedule import Day
 
 
 class Doctor:
@@ -20,7 +25,7 @@ class Doctor:
     def init_preferences(self, **kwargs) -> None:
         self.preferences = DoctorsDutyPreferences(**kwargs)
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f'Doctor {self.name} (pk={self.pk})'
 
 
@@ -43,3 +48,15 @@ class DoctorsDutyPreferences:
         self.preferred_weekdays = preferred_weekdays
         self.preferred_positions = preferred_positions
         self.maximum_accepted_duties = maximum_accepted_duties
+
+    def can_accept_duty_on_day(self, day: Day) -> bool:
+        if day.number + 1 in self.requested_days or day.number - 1 in self.requested_days:
+            return False
+
+        if day.weekday not in self.preferred_weekdays and day.number not in self.requested_days:
+            return False
+
+        if day.number in self.exceptions:
+            return False
+
+        return True
