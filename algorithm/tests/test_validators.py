@@ -3,6 +3,7 @@ from unittest import TestCase
 from algorithm.duty_setter import DutySetter
 from algorithm.tests.utils import doctor_factory
 from algorithm.validators import (
+    BidailyDoctorAvailabilityValidator,
     DailyDoctorAvailabilityValidator,
     DoctorCountValidator,
     PreferencesCoherenceValidator,
@@ -192,7 +193,6 @@ class DailyDoctorAvailabilityValidatorTests(TestCase):
         self.duty_setter.add_doctor(*doctors)
 
         for doctor in doctors:
-            print(doctor)
             doctor.init_preferences(**self.get_kwargs())
 
         self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4 = doctors
@@ -239,3 +239,108 @@ class DailyDoctorAvailabilityValidatorTests(TestCase):
         self.assertIn('not enough doctors are available for duty', errors[0])
         self.assertIn(str(self.doctor_3), errors[0])
         self.assertIn(str(self.doctor_4), errors[0])
+
+
+class BidailyDoctorAvailabilityValidatorTests(TestCase):
+    def setUp(self):
+        self.year = 2025
+        self.month = 1
+        self.duty_setter = DutySetter(self.year, self.month, 3)
+        self.schedule = self.duty_setter.schedule
+
+        doctors = doctor_factory(7)
+        self.duty_setter.add_doctor(*doctors)
+
+        for doctor in doctors:
+            doctor.init_preferences(**self.get_kwargs())
+
+        self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4, self.doctor_5, self.doctor_6, self.doctor_7 = (
+            doctors
+        )
+
+    def get_kwargs(self):
+        return {
+            "year": self.year,
+            "month": self.month,
+            "exceptions": [],
+            "requested_days": [],
+            "preferred_weekdays": list(range(7)),
+            "preferred_positions": [1, 2, 3],
+            "maximum_accepted_duties": 15,
+        }
+
+    def test_no_errors(self):
+        self.doctor_1.preferences.preferred_positions = [1]
+        self.doctor_2.preferences.preferred_positions = [1]
+        self.doctor_2.preferences.exceptions = [11]
+
+        for doctor in [self.doctor_3, self.doctor_4, self.doctor_5, self.doctor_6, self.doctor_7]:
+            doctor.preferences.preferred_positions = [2, 3]
+
+        errors = self.duty_setter._run_validator(BidailyDoctorAvailabilityValidator)
+        self.assertEqual(0, len(errors))
+
+    def test_all_day_pairs_are_checked(self):
+        for doctor in [
+            self.doctor_1,
+            self.doctor_2,
+            self.doctor_3,
+            self.doctor_4,
+            self.doctor_5,
+            self.doctor_6,
+            self.doctor_7,
+        ]:
+            doctor.preferences.preferred_positions = [1, 2]
+
+        errors = self.duty_setter._run_validator(BidailyDoctorAvailabilityValidator)
+        self.assertEqual(30, len(errors))
+
+        for day_1, day_2, error in zip(range(1, 31), range(2, 32), errors):
+            self.assertIn(f'days {day_1} and {day_2}', error)
+
+    def test_missing_doctors_one_position(self):
+        self.doctor_1.preferences.preferred_positions = [1]
+        self.doctor_2.preferences.preferred_positions = [1]
+        self.doctor_2.preferences.exceptions = [11, 12]
+
+        for doctor in [self.doctor_3, self.doctor_4, self.doctor_5, self.doctor_6, self.doctor_7]:
+            doctor.preferences.preferred_positions = [2, 3]
+
+        errors = self.duty_setter._run_validator(BidailyDoctorAvailabilityValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('days 11 and 12, position 1', errors[0])
+        self.assertIn('1 doctor less', errors[0])
+        self.assertIn(f'Available: {self.doctor_1} (pos. 1)', errors[0])
+
+    def test_missing_doctors_two_positions(self):
+        for doctor in [self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4]:
+            doctor.preferences.preferred_positions = [1, 3]
+
+        for doctor in [self.doctor_5, self.doctor_6, self.doctor_7]:
+            doctor.preferences.preferred_positions = [2]
+
+        self.doctor_2.preferences.exceptions = [11, 12]
+
+        errors = self.duty_setter._run_validator(BidailyDoctorAvailabilityValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('days 11 and 12, position 1, 3', errors[0])
+        self.assertIn('1 doctor less', errors[0])
+
+    def test_missing_doctors_overlapping_combinations(self):
+        for doctor in [self.doctor_1, self.doctor_2]:
+            doctor.preferences.preferred_positions = [1]
+
+        for doctor in [self.doctor_3, self.doctor_4]:
+            doctor.preferences.preferred_positions = [2]
+
+        for doctor in [self.doctor_5, self.doctor_6, self.doctor_7]:
+            doctor.preferences.preferred_positions = [3]
+
+        self.doctor_2.preferences.exceptions = [11, 12]
+        self.doctor_6.preferences.exceptions = [11, 12]
+        self.doctor_7.preferences.exceptions = [11]
+
+        errors = self.duty_setter._run_validator(BidailyDoctorAvailabilityValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('days 11 and 12, position 1, 2', errors[0])
+        self.assertIn('1 doctor less', errors[0])

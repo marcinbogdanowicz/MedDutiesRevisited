@@ -198,8 +198,11 @@ class AvailableDoctorList(Cell, list):
 class DoctorAvailabilityScheduleRow(ScheduleRow):
     member_class = AvailableDoctorList
 
+    def doctors_for_positions(self, *positions: int) -> set[Doctor]:
+        return set(sum((self[position] for position in positions), []))
+
     def doctors_for_all_positions(self) -> set[Doctor]:
-        return set(sum(self, []))
+        return self.doctors_for_positions(*range(1, len(self) + 1))
 
 
 class DoctorAvailabilitySchedule(Schedule):

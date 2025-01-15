@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import DutySchedule
 from algorithm.validators import (
+    BidailyDoctorAvailabilityValidator,
     DailyDoctorAvailabilityValidator,
     DoctorCountValidator,
     PreferencesCoherenceValidator,
@@ -34,6 +35,7 @@ class DutySetter:
         PreferencesCoherenceValidator,
         RequestedDaysConflictsValidator,
         DailyDoctorAvailabilityValidator,
+        BidailyDoctorAvailabilityValidator,
     ]
 
     def __init__(self, year: int, month: int, doctors_per_duty: int) -> None:

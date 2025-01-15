@@ -34,6 +34,10 @@ def recursive_getattr(obj, attr, default=None):
     return default
 
 
+def is_superset_included(subset: set, iterables: Sequence[Sequence]) -> bool:
+    return any(set(iterable).issuperset(subset) for iterable in iterables)
+
+
 def comma_join(objects: Sequence[Any]) -> str:
     return ", ".join(str(obj) for obj in objects)
 

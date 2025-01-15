@@ -3,10 +3,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import cached_property
+from itertools import combinations
 from typing import TYPE_CHECKING
 
 from algorithm.exceptions import CantSetDutiesError
-from algorithm.utils import DoctorAvailabilityHelper, comma_join
+from algorithm.utils import DoctorAvailabilityHelper, comma_join, is_superset_included
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
@@ -181,8 +182,6 @@ class DailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
         days_with_missing_doctors = []
 
         for row in self.availability_schedule:
-            if row.day.number in [7, 8, 9]:
-                print(row)
             day = row.day
             if positions_with_missing_doctors := [
                 available_doctors.position for available_doctors in row if not available_doctors
@@ -206,5 +205,61 @@ class DailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
 
 
 class BidailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
+    def __init__(self, schedule, doctors):
+        super().__init__(schedule, doctors)
+        self.position_combinations = self._get_position_combinations()
+
     def perform_validation(self) -> None:
-        pass
+        for day_number in range(1, self.availability_schedule.days):
+            self._validate_day(day_number)
+
+    def _validate_day(self, day_number: int) -> None:
+        errors: dict[tuple, str] = {}
+
+        for positions_combination in self.position_combinations:
+            available_doctors = self._get_available_doctors(day_number, positions_combination)
+            missing_doctors = len(positions_combination) * 2 - len(available_doctors)
+
+            if missing_doctors > 0 and not is_superset_included(set(positions_combination), errors.keys()):
+                errors[positions_combination] = self._get_error_str(
+                    day_number, positions_combination, missing_doctors, available_doctors
+                )
+
+        if errors:
+            self.errors.extend(errors.values())
+
+    def _get_available_doctors(self, day_number: int, positions: tuple[int]) -> set[Doctor]:
+        today = self.availability_schedule[day_number]
+        tommorrow = self.availability_schedule[day_number + 1]
+        return today.doctors_for_positions(*positions) | tommorrow.doctors_for_positions(*positions)
+
+    def _get_error_str(
+        self,
+        day_number: int,
+        positions_combination: tuple[int, ...],
+        missing_count: int,
+        available_doctors: set[Doctor],
+    ) -> str:
+        missing_doctors_pluralized = (
+            f'are {missing_count} doctors' if missing_count > 1 else f'is {missing_count} doctor'
+        )
+        available_doctors_str = (
+            comma_join(
+                f'{doctor} (pos. {comma_join(doctor.preferences.preferred_positions)})' for doctor in available_doctors
+            )
+            if available_doctors
+            else '-'
+        )
+        return (
+            f'On days {day_number} and {day_number + 1}, position {comma_join(positions_combination)}, '
+            f'there {missing_doctors_pluralized} less than required. '
+            f'(Available: {available_doctors_str}).'
+        )
+
+    def _get_position_combinations(self) -> list[tuple[int, ...]]:
+        combs = []
+        positions = range(1, self.schedule.positions + 1)
+        for i in reversed(positions):
+            combs.extend(combinations(positions, i))
+
+        return combs
