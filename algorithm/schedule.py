@@ -198,6 +198,9 @@ class AvailableDoctorList(Cell, list):
 class DoctorAvailabilityScheduleRow(ScheduleRow):
     member_class = AvailableDoctorList
 
+    def doctors_for_all_positions(self) -> set[Doctor]:
+        return set(sum(self, []))
+
 
 class DoctorAvailabilitySchedule(Schedule):
     member_class = DoctorAvailabilityScheduleRow

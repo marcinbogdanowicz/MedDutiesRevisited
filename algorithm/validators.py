@@ -6,11 +6,11 @@ from functools import cached_property
 from typing import TYPE_CHECKING
 
 from algorithm.exceptions import CantSetDutiesError
-from algorithm.utils import comma_join
+from algorithm.utils import DoctorAvailabilityHelper, comma_join
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
-    from algorithm.schedule import DutySchedule
+    from algorithm.schedule import DoctorAvailabilitySchedule, DutySchedule
 
 
 class BaseDutySettingValidator(ABC):
@@ -160,3 +160,51 @@ class RequestedDaysConflictsValidator(BaseDutySettingValidator):
             for day_number, filled_positions in self._filled_positions_daily.items()
             if all_positions_filled(filled_positions)
         ]
+
+
+class BaseDoctorAvailabilityValidator(BaseDutySettingValidator):
+    def __init__(self, schedule, doctors):
+        super().__init__(schedule, doctors)
+        self.availability_schedule = self._get_availability_schedule()
+
+    def _get_availability_schedule(self) -> DoctorAvailabilitySchedule:
+        helper = DoctorAvailabilityHelper(self.doctors, self.schedule)
+        return helper.get_availability_schedule()
+
+
+class DailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
+    def perform_validation(self) -> None:
+        self._validate_each_position()
+        self._validate_each_day()
+
+    def _validate_each_position(self) -> None:
+        days_with_missing_doctors = []
+
+        for row in self.availability_schedule:
+            if row.day.number in [7, 8, 9]:
+                print(row)
+            day = row.day
+            if positions_with_missing_doctors := [
+                available_doctors.position for available_doctors in row if not available_doctors
+            ]:
+                days_with_missing_doctors.append(f'{day}: {positions_with_missing_doctors}')
+
+        if days_with_missing_doctors:
+            days_with_positions_str = '; '.join(days_with_missing_doctors)
+            self.errors.append(
+                'On the following positions on the following days, there are no doctors available for duty: '
+                f'{days_with_positions_str}.'
+            )
+
+    def _validate_each_day(self) -> None:
+        for row in self.availability_schedule:
+            available_doctors = row.doctors_for_all_positions()
+            if len(available_doctors) < self.availability_schedule.positions:
+                self.errors.append(
+                    f'On {row.day} not enough doctors are available for duty - only: {comma_join(available_doctors)}.'
+                )
+
+
+class BidailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
+    def perform_validation(self) -> None:
+        pass

@@ -2,7 +2,12 @@ from unittest import TestCase
 
 from algorithm.duty_setter import DutySetter
 from algorithm.tests.utils import doctor_factory
-from algorithm.validators import DoctorCountValidator, PreferencesCoherenceValidator, RequestedDaysConflictsValidator
+from algorithm.validators import (
+    DailyDoctorAvailabilityValidator,
+    DoctorCountValidator,
+    PreferencesCoherenceValidator,
+    RequestedDaysConflictsValidator,
+)
 
 
 class DoctorCountValidatorTests(TestCase):
@@ -174,3 +179,63 @@ class RequestedDaysConflictsValidatorTests(TestCase):
 
         errors = self.duty_setter._run_validator(RequestedDaysConflictsValidator)
         self.assertEqual(0, len(errors))
+
+
+class DailyDoctorAvailabilityValidatorTests(TestCase):
+    def setUp(self):
+        self.year = 2025
+        self.month = 1
+        self.duty_setter = DutySetter(self.year, self.month, 3)
+        self.schedule = self.duty_setter.schedule
+
+        doctors = doctor_factory(4)
+        self.duty_setter.add_doctor(*doctors)
+
+        for doctor in doctors:
+            print(doctor)
+            doctor.init_preferences(**self.get_kwargs())
+
+        self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4 = doctors
+
+    def get_kwargs(self):
+        return {
+            "year": self.year,
+            "month": self.month,
+            "exceptions": [],
+            "requested_days": [],
+            "preferred_weekdays": list(range(7)),
+            "preferred_positions": [1, 2, 3],
+            "maximum_accepted_duties": 15,
+        }
+
+    def test_no_errors(self):
+        self.doctor_1.preferences.exceptions = [5, 6, 7]
+
+        errors = self.duty_setter._run_validator(DailyDoctorAvailabilityValidator)
+        self.assertEqual(0, len(errors))
+
+    def test_position_errors(self):
+        doctor_5 = doctor_factory()
+        self.duty_setter.add_doctor(doctor_5)
+        doctor_5.init_preferences(**self.get_kwargs())
+        self.doctor_1.preferences.preferred_positions = [2, 3]
+        self.doctor_2.preferences.preferred_positions = [1]
+        self.doctor_2.preferences.exceptions = [8]
+        self.doctor_3.preferences.preferred_positions = [2, 3]
+        self.doctor_4.preferences.preferred_positions = [2, 3]
+        doctor_5.preferences.preferred_positions = [2, 3]
+
+        errors = self.duty_setter._run_validator(DailyDoctorAvailabilityValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('there are no doctors available for duty', errors[0])
+        self.assertIn('8/1/2025: [1]', errors[0])
+
+    def test_day_errors(self):
+        self.doctor_1.preferences.preferred_weekdays = [3]
+        self.doctor_2.preferences.exceptions = [8]
+
+        errors = self.duty_setter._run_validator(DailyDoctorAvailabilityValidator)
+        self.assertEqual(1, len(errors))
+        self.assertIn('not enough doctors are available for duty', errors[0])
+        self.assertIn(str(self.doctor_3), errors[0])
+        self.assertIn(str(self.doctor_4), errors[0])
