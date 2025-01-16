@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock, call, patch
 
 from algorithm.duty_setter import DutySetter
+from algorithm.schedule import DutySchedule
 from algorithm.tests.utils import ExpectedError, doctor_factory
 
 
@@ -55,3 +56,22 @@ class DutySetterTests(TestCase):
 
         self.assertEqual(2, len(mock_validator.mock_calls))
         self.assertIn(call().run(), mock_validator.mock_calls)
+
+    def test_get_result_without_running_checks(self):
+        setter = DutySetter(2025, 1, 3)
+
+        with self.assertRaises(AttributeError):
+            setter.get_result()
+
+    def test_get_results_errors_found(self):
+        setter = DutySetter(2025, 1, 3)
+        setter.set_duties()
+        result = setter.get_result()
+
+        self.assertFalse(result.were_all_duties_set)
+        self.assertFalse(result.were_any_duties_set)
+        self.assertListEqual(
+            ['There are not enough doctors to fill all positions. Minimum required: 6, actual: 0.'],
+            result.errors,
+        )
+        self.assertIsInstance(result.duties, DutySchedule)

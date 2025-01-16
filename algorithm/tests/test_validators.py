@@ -198,7 +198,12 @@ class DailyDoctorAvailabilityValidatorTests(ValidatorTestMixin, TestCase):
     year = 2025
     month = 1
     duty_positions = 3
-    doctors_count = 4
+    doctors_count = 6
+
+    def setUp(self):
+        super().setUp()
+        self.doctor_5.preferences.exceptions = list(range(1, 32))
+        self.doctor_6.preferences.exceptions = list(range(1, 32))
 
     def test_no_errors(self):
         self.doctor_1.preferences.exceptions = [5, 6, 7]
@@ -233,35 +238,11 @@ class DailyDoctorAvailabilityValidatorTests(ValidatorTestMixin, TestCase):
         self.assertIn(str(self.doctor_4), errors[0])
 
 
-class BidailyDoctorAvailabilityValidatorTests(TestCase):
+class BidailyDoctorAvailabilityValidatorTests(ValidatorTestMixin, TestCase):
     year = 2025
     month = 1
     duty_positions = 3
     doctors_count = 7
-
-    def setUp(self):
-        self.duty_setter = DutySetter(self.year, self.month, self.duty_positions)
-        self.schedule = self.duty_setter.schedule
-
-        doctors = doctor_factory(self.doctors_count)
-        self.duty_setter.add_doctor(*doctors)
-
-        for doctor in doctors:
-            doctor.init_preferences(**self.get_init_preferences_kwargs())
-
-        # Unpack doctors to self.doctor_{i} properties
-        exec(', '.join(f'self.doctor_{i}' for i in range(1, self.doctors_count + 1)) + ' = doctors')
-
-    def get_init_preferences_kwargs(self):
-        return {
-            "year": self.year,
-            "month": self.month,
-            "exceptions": [],
-            "requested_days": [],
-            "preferred_weekdays": list(range(7)),
-            "preferred_positions": list(range(1, self.duty_positions + 1)),
-            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.month, self.year),
-        }
 
     def test_no_errors(self):
         self.doctor_1.preferences.preferred_positions = [1]

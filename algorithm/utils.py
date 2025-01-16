@@ -121,18 +121,6 @@ def get_holidays() -> dict[int, dict[int, list[int]]]:
 
 
 class DoctorAvailabilityHelper:
-    """
-    Considerations:
-    - if doctor has a user-set duty on one position, shouldn't he be removed from other positions?
-    - if doctor has a user-set duty on one position, shouldn't all other doctors be removed from this position?
-    - if doctor has a user-set duty on a day he wouldn't prefer (e.g. on an excluded weekday),
-      he isn't included - maybe he should?
-    - however, if doctor requests a duty on a weekday he doesn't prefer, he will be included
-      (which is inconsistent with other preferences and with the doctor being given a duty manually on this day)
-    - when doctor has a user-set duty on position he doesn't prefer, he will be available on the preferred position,
-      but not on the one he is set at...
-    """
-
     def __init__(self, doctors: list[Doctor], duty_schedule: DutySchedule) -> None:
         self.doctors = doctors
         self.duty_schedule = duty_schedule

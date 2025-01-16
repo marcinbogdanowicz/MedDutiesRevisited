@@ -44,6 +44,16 @@ class DoctorCountValidator(BaseDutySettingValidator):
             )
 
 
+class DoctorCountDependentMixin:
+    def run(self) -> None:
+        try:
+            DoctorCountValidator(self.schedule, self.doctors).run()
+        except CantSetDutiesError:
+            return
+
+        super().run()
+
+
 class PreferencesCoherenceValidator(BaseDutySettingValidator):
     def perform_validation(self) -> None:
         for doctor in self.doctors:
@@ -163,7 +173,7 @@ class RequestedDaysConflictsValidator(BaseDutySettingValidator):
         ]
 
 
-class BaseDoctorAvailabilityValidator(BaseDutySettingValidator):
+class BaseDoctorAvailabilityValidator(DoctorCountDependentMixin, BaseDutySettingValidator):
     def __init__(self, schedule, doctors):
         super().__init__(schedule, doctors)
         self.availability_schedule = self._get_availability_schedule()
@@ -199,9 +209,8 @@ class DailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
         for row in self.availability_schedule:
             available_doctors = row.doctors_for_all_positions()
             if len(available_doctors) < self.availability_schedule.positions:
-                self.errors.append(
-                    f'On {row.day} not enough doctors are available for duty - only: {comma_join(available_doctors)}.'
-                )
+                available_doctors_str = f' - only: {comma_join(available_doctors)}' if available_doctors else ''
+                self.errors.append(f'On {row.day} not enough doctors are available for duty{available_doctors_str}.')
 
 
 class BidailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
