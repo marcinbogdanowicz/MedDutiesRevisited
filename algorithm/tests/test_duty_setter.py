@@ -4,7 +4,7 @@ from unittest.mock import Mock, call, patch
 
 from algorithm.duty_setter import DutySetter
 from algorithm.schedule import DutySchedule
-from algorithm.tests.utils import ExpectedError, doctor_factory
+from algorithm.tests.utils import ExpectedError, InitDutySetterTestMixin, doctor_factory
 
 
 class DutySetterTests(TestCase):
@@ -75,3 +75,59 @@ class DutySetterTests(TestCase):
             result.errors,
         )
         self.assertIsInstance(result.duties, DutySchedule)
+
+    @patch('algorithm.duty_setter.RequestedDutiesSetter')
+    def test_assign_requested_duties(self, mock_requested_duties_setter):
+        setter = DutySetter(2025, 1, 3)
+        setter.doctors = 'doctors'
+        setter.schedule = 'schedule'
+
+        setter._assign_requested_duties()
+
+        self.assertListEqual(
+            mock_requested_duties_setter.mock_calls,
+            [call('doctors', 'schedule'), call().set_duties()],
+        )
+
+
+class RequestedDutiesSetterTests(InitDutySetterTestMixin, TestCase):
+    year = 2025
+    month = 1
+    duty_positions = 3
+    doctors_count = 4
+
+    def test_duties_assigned_within_accepted_combinations(self):
+        self.doctor_1.preferences.requested_days = [5]
+        self.doctor_1.preferences.preferred_positions = [1, 2]
+        self.doctor_2.preferences.requested_days = [5]
+        self.doctor_2.preferences.preferred_positions = [2, 3]
+        self.doctor_3.preferences.requested_days = [5]
+        self.doctor_3.preferences.preferred_positions = [1]
+
+        self.duty_setter._assign_requested_duties()
+
+        for doctor in [self.doctor_1, self.doctor_2, self.doctor_3]:
+            duties = list(self.schedule.duties_for_doctor(doctor))
+            self.assertEqual(1, len(duties))
+            self.assertEqual(5, duties[0].day.number)
+            self.assertIn(duties[0].position, doctor.preferences.preferred_positions)
+
+    def test_set_duties_are_respected(self):
+        self.doctor_1.preferences.requested_days = [5]
+        self.doctor_1.preferences.preferred_positions = [1, 2]
+        self.doctor_2.preferences.requested_days = [5]
+        self.doctor_2.preferences.preferred_positions = [2, 3]
+
+        self.schedule[5, 2].update(self.doctor_3)
+
+        self.duty_setter._assign_requested_duties()
+
+        doctor_1_duties = list(self.schedule.duties_for_doctor(self.doctor_1))
+        self.assertEqual(1, len(doctor_1_duties))
+        self.assertEqual(5, doctor_1_duties[0].day.number)
+        self.assertEqual(1, doctor_1_duties[0].position)
+
+        doctor_2_duties = list(self.schedule.duties_for_doctor(self.doctor_2))
+        self.assertEqual(1, len(doctor_2_duties))
+        self.assertEqual(5, doctor_2_duties[0].day.number)
+        self.assertEqual(3, doctor_2_duties[0].position)

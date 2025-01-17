@@ -172,6 +172,10 @@ class Duty(Cell):
         if pk is not None:
             self.pk = pk
 
+    @property
+    def is_set(self) -> bool:
+        return self.doctor is not None
+
     def __repr__(self) -> str:
         return f'{super().__repr__()}: {self.doctor}'
 
@@ -182,12 +186,18 @@ class DutyRow(ScheduleRow):
     def has_duty(self, doctor: Doctor) -> bool:
         return any(doctor in duty for duty in self)
 
+    def free_positions(self) -> set[int]:
+        return {duty.position for duty in self if not duty.is_set}
+
 
 class DutySchedule(Schedule):
     member_class = DutyRow
 
     def cells(self) -> Iterator[Duty]:
         return chain(*self)
+
+    def duties_for_doctor(self, doctor: Doctor) -> Iterator[Duty]:
+        return (duty for duty in self.cells() if doctor in duty)
 
 
 class AvailableDoctorList(Cell, list):

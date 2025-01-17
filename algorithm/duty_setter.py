@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import random
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import DutySchedule
+from algorithm.utils import unique_product
 from algorithm.validators import (
     BidailyDoctorAvailabilityValidator,
     DailyDoctorAvailabilityValidator,
@@ -59,6 +62,8 @@ class DutySetter:
         if not can_be_set:
             return
 
+        self._assign_requested_duties()
+
         # TODO: Finish
 
     def get_result(self) -> Result:
@@ -89,3 +94,37 @@ class DutySetter:
             return []
         except CantSetDutiesError as exc:
             return exc.errors
+
+    def _assign_requested_duties(self) -> None:
+        setter = RequestedDutiesSetter(self.doctors, self.schedule)
+        setter.set_duties()
+
+
+class RequestedDutiesSetter:
+    def __init__(self, doctors: list[Doctor], schedule: DutySchedule) -> None:
+        self.doctors = doctors
+        self.schedule = schedule
+
+    def set_duties(self) -> None:
+        daily_accepted_positions_per_doctor = self._get_daily_accepted_positions_per_doctor()
+
+        for day_number, accepted_positions_per_doctor in daily_accepted_positions_per_doctor.items():
+            # Combinations elements order will always follow the order of doctors.
+            position_combinations = unique_product(*accepted_positions_per_doctor.values())
+
+            positions = random.choice(position_combinations)
+            doctors = accepted_positions_per_doctor.keys()
+
+            for doctor, position in zip(doctors, positions):
+                self.schedule[day_number, position].update(doctor)
+
+    def _get_daily_accepted_positions_per_doctor(self) -> dict[int, dict[Doctor, list[int]]]:
+        result = defaultdict(dict)
+
+        for doctor in self.doctors:
+            preferred_positions = set(doctor.preferences.preferred_positions)
+            for requested_day in doctor.preferences.requested_days:
+                possible_positions = preferred_positions & self.schedule[requested_day].free_positions()
+                result[requested_day][doctor] = possible_positions
+
+        return result

@@ -3,6 +3,7 @@ import random
 from faker import Faker
 
 from algorithm.doctor import Doctor
+from algorithm.duty_setter import DutySetter
 from algorithm.schedule import Day
 from algorithm.utils import get_max_number_of_duties_for_month
 
@@ -76,3 +77,34 @@ def doctor_factory(count=1, /, **kwargs):
 
 class ExpectedError(Exception):
     pass
+
+
+class InitDutySetterTestMixin:
+    year: int
+    month: int
+    duty_positions: int
+    doctors_count: int
+
+    def setUp(self):
+        self.duty_setter = DutySetter(self.year, self.month, self.duty_positions)
+        self.schedule = self.duty_setter.schedule
+
+        doctors = doctor_factory(self.doctors_count) if self.doctors_count > 1 else [doctor_factory(self.doctors_count)]
+        self.duty_setter.add_doctor(*doctors)
+
+        for doctor in doctors:
+            doctor.init_preferences(**self.get_init_preferences_kwargs())
+
+        # Unpack doctors to self.doctor_{i} properties
+        exec('\n'.join(f'self.doctor_{i} = doctors[{i} - 1]' for i in range(1, self.doctors_count + 1)))
+
+    def get_init_preferences_kwargs(self):
+        return {
+            "year": self.year,
+            "month": self.month,
+            "exceptions": [],
+            "requested_days": [],
+            "preferred_weekdays": list(range(7)),
+            "preferred_positions": list(range(1, self.duty_positions + 1)),
+            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.month, self.year),
+        }

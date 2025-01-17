@@ -1,8 +1,7 @@
 from unittest import TestCase
 
 from algorithm.duty_setter import DutySetter
-from algorithm.tests.utils import doctor_factory
-from algorithm.utils import get_max_number_of_duties_for_month
+from algorithm.tests.utils import InitDutySetterTestMixin, doctor_factory
 from algorithm.validators import (
     BidailyDoctorAvailabilityValidator,
     DailyDoctorAvailabilityValidator,
@@ -10,37 +9,6 @@ from algorithm.validators import (
     PreferencesCoherenceValidator,
     RequestedDaysConflictsValidator,
 )
-
-
-class ValidatorTestMixin:
-    year: int
-    month: int
-    duty_positions: int
-    doctors_count: int
-
-    def setUp(self):
-        self.duty_setter = DutySetter(self.year, self.month, self.duty_positions)
-        self.schedule = self.duty_setter.schedule
-
-        doctors = doctor_factory(self.doctors_count) if self.doctors_count > 1 else [doctor_factory(self.doctors_count)]
-        self.duty_setter.add_doctor(*doctors)
-
-        for doctor in doctors:
-            doctor.init_preferences(**self.get_init_preferences_kwargs())
-
-        # Unpack doctors to self.doctor_{i} properties
-        exec('\n'.join(f'self.doctor_{i} = doctors[{i} - 1]' for i in range(1, self.doctors_count + 1)))
-
-    def get_init_preferences_kwargs(self):
-        return {
-            "year": self.year,
-            "month": self.month,
-            "exceptions": [],
-            "requested_days": [],
-            "preferred_weekdays": list(range(7)),
-            "preferred_positions": list(range(1, self.duty_positions + 1)),
-            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.month, self.year),
-        }
 
 
 class DoctorCountValidatorTests(TestCase):
@@ -67,7 +35,7 @@ class DoctorCountValidatorTests(TestCase):
                 self.assertEqual(0, len(errors))
 
 
-class PreferencesCoherenceValidatorTests(ValidatorTestMixin, TestCase):
+class PreferencesCoherenceValidatorTests(InitDutySetterTestMixin, TestCase):
     year = 2025
     month = 1
     duty_positions = 3
@@ -113,7 +81,7 @@ class PreferencesCoherenceValidatorTests(ValidatorTestMixin, TestCase):
         self.assertIn('requests duties on 3 days, but would accept only 2 duties.', errors[0])
 
 
-class RequestedDaysConflictsValidatorTests(ValidatorTestMixin, TestCase):
+class RequestedDaysConflictsValidatorTests(InitDutySetterTestMixin, TestCase):
     year = 2025
     month = 1
     duty_positions = 3
@@ -194,7 +162,7 @@ class RequestedDaysConflictsValidatorTests(ValidatorTestMixin, TestCase):
         self.assertEqual(0, len(errors))
 
 
-class DailyDoctorAvailabilityValidatorTests(ValidatorTestMixin, TestCase):
+class DailyDoctorAvailabilityValidatorTests(InitDutySetterTestMixin, TestCase):
     year = 2025
     month = 1
     duty_positions = 3
@@ -238,7 +206,7 @@ class DailyDoctorAvailabilityValidatorTests(ValidatorTestMixin, TestCase):
         self.assertIn(str(self.doctor_4), errors[0])
 
 
-class BidailyDoctorAvailabilityValidatorTests(ValidatorTestMixin, TestCase):
+class BidailyDoctorAvailabilityValidatorTests(InitDutySetterTestMixin, TestCase):
     year = 2025
     month = 1
     duty_positions = 3

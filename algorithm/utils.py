@@ -4,6 +4,7 @@ import calendar
 from collections import defaultdict
 from contextlib import suppress
 from functools import reduce
+from itertools import product
 from typing import TYPE_CHECKING, Any, Sequence
 
 if TYPE_CHECKING:
@@ -40,6 +41,10 @@ def is_superset_included(subset: set, iterables: Sequence[Sequence]) -> bool:
 
 def comma_join(objects: Sequence[Any]) -> str:
     return ", ".join(str(obj) for obj in objects)
+
+
+def unique_product(*iterables: Sequence) -> list[tuple]:
+    return [elem for elem in product(*iterables) if len(elem) == len(set(elem))]
 
 
 def get_holidays() -> dict[int, dict[int, list[int]]]:
