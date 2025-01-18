@@ -64,19 +64,19 @@ class DoctorAvailabilityHelperTests(TestCase):
 
         availability_schedule = self.helper.get_availability_schedule()
 
-        self.assertListEqual(availability_schedule[1, 1], [self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4])
-        self.assertListEqual(availability_schedule[1, 2], [self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4])
+        self.assertListEqual(availability_schedule[1, 1], [self.doctor_1])
+        self.assertListEqual(availability_schedule[1, 2], [self.doctor_2, self.doctor_3, self.doctor_4])
         self.assertListEqual(availability_schedule[2, 1], [self.doctor_2, self.doctor_3, self.doctor_4])
         self.assertListEqual(availability_schedule[2, 2], [self.doctor_2, self.doctor_3, self.doctor_4])
         self.assertListEqual(availability_schedule[4, 1], [self.doctor_1])
         self.assertListEqual(availability_schedule[4, 2], [self.doctor_1])
-        self.assertListEqual(availability_schedule[5, 1], [self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4])
-        self.assertListEqual(availability_schedule[5, 2], [self.doctor_1, self.doctor_2, self.doctor_3, self.doctor_4])
+        self.assertListEqual(availability_schedule[5, 1], [self.doctor_2])
+        self.assertListEqual(availability_schedule[5, 2], [self.doctor_3])
         self.assertListEqual(availability_schedule[6, 1], [self.doctor_1, self.doctor_4])
         self.assertListEqual(availability_schedule[6, 2], [self.doctor_1, self.doctor_4])
         self.assertListEqual(availability_schedule[10, 1], [self.doctor_1, self.doctor_2, self.doctor_3])
         self.assertListEqual(availability_schedule[10, 2], [self.doctor_1, self.doctor_2, self.doctor_3])
-        self.assertListEqual(availability_schedule[11, 1], [self.doctor_1, self.doctor_2, self.doctor_3])
+        self.assertListEqual(availability_schedule[11, 1], [self.doctor_4])
         self.assertListEqual(availability_schedule[11, 2], [self.doctor_1, self.doctor_2, self.doctor_3])
         self.assertListEqual(availability_schedule[12, 1], [self.doctor_1, self.doctor_2, self.doctor_3])
         self.assertListEqual(availability_schedule[12, 2], [self.doctor_1, self.doctor_2, self.doctor_3])
@@ -137,13 +137,14 @@ class DoctorAvailabilityHelperTests(TestCase):
         availability_schedule = self.helper.get_availability_schedule()
 
         for row in availability_schedule:
-            self.assertIn(self.doctor_1, row[1])
-            self.assertNotIn(self.doctor_1, row[2])
+            if row.day.number != 5:
+                self.assertIn(self.doctor_1, row[1])
+                self.assertNotIn(self.doctor_1, row[2])
 
         self.assertNotIn(self.doctor_2, availability_schedule[4, 1])
         self.assertNotIn(self.doctor_2, availability_schedule[4, 2])
-        self.assertNotIn(self.doctor_2, availability_schedule[5, 1])
-        self.assertIn(self.doctor_2, availability_schedule[5, 2])
+        self.assertIn(self.doctor_2, availability_schedule[5, 1])
+        self.assertNotIn(self.doctor_2, availability_schedule[5, 2])
         self.assertNotIn(self.doctor_2, availability_schedule[6, 1])
         self.assertNotIn(self.doctor_2, availability_schedule[6, 2])
 
@@ -168,8 +169,8 @@ class DoctorAvailabilityHelperTests(TestCase):
 
         availability_schedule = self.helper.get_availability_schedule()
 
-        self.assertIn(self.doctor_1, availability_schedule[1, 1])  # Wrong!
-        self.assertNotIn(self.doctor_1, availability_schedule[1, 2])  # Wrong!
+        self.assertNotIn(self.doctor_1, availability_schedule[1, 1])
+        self.assertIn(self.doctor_1, availability_schedule[1, 2])
         self.assertNotIn(self.doctor_1, availability_schedule[8, 1])
         self.assertNotIn(self.doctor_1, availability_schedule[8, 2])
         self.assertIn(self.doctor_1, availability_schedule[9, 1])

@@ -137,18 +137,26 @@ class DoctorAvailabilityHelper:
             self.duty_schedule.month, self.duty_schedule.year, self.duty_schedule.positions
         )
 
-        for doctor in self.doctors:
-            for row in availability_schedule:
-                day = row.day
-                if not self._has_doctor_received_conflicting_duties(
+        for row in availability_schedule:
+            day = row.day
+            doctors = self.doctors.copy()
+            free_positions = self.duty_schedule[day.number].free_positions()
+
+            for duty in self.duty_schedule[day.number].set_duties():
+                doctors.remove(duty.doctor)
+                availability_schedule[day.number, duty.position].append(duty.doctor)
+
+            for doctor in doctors:
+                if not self._has_doctor_received_duties_on_adjacent_days(
                     doctor, day.number
                 ) and doctor.preferences.can_accept_duty_on_day(day):
-                    for position in doctor.preferences.preferred_positions:
+                    available_free_positions = free_positions & set(doctor.preferences.preferred_positions)
+                    for position in available_free_positions:
                         availability_schedule[day.number, position].append(doctor)
 
         return availability_schedule
 
-    def _has_doctor_received_conflicting_duties(self, doctor: Doctor, day_number: int) -> bool:
+    def _has_doctor_received_duties_on_adjacent_days(self, doctor: Doctor, day_number: int) -> bool:
         for day in [day_number - 1, day_number + 1]:
             with suppress(KeyError):
                 if self.duty_schedule[day].has_duty(doctor):

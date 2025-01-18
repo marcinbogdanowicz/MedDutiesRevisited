@@ -189,6 +189,9 @@ class DutyRow(ScheduleRow):
     def free_positions(self) -> set[int]:
         return {duty.position for duty in self if not duty.is_set}
 
+    def set_duties(self) -> Iterator[Duty]:
+        return (duty for duty in self if duty.is_set)
+
 
 class DutySchedule(Schedule):
     member_class = DutyRow
