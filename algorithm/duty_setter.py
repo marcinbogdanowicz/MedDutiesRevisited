@@ -88,7 +88,7 @@ class DutySetter:
         for validator_class in self.validator_classes:
             self.errors += self._run_validator(validator_class)
 
-        return bool(self.errors)
+        return not self.errors
 
     def _run_validator(self, validator_class: type[BaseDutySettingValidator]) -> list[str]:
         try:
