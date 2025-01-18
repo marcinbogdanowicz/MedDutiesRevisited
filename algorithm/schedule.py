@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import date
 from itertools import chain
-from typing import Any, Iterator
+from typing import Any, Iterator, Self
 
 from algorithm.doctor import Doctor
 from algorithm.enums import DayCategory, StrainPoints, Weekday
@@ -198,6 +198,9 @@ class DutySchedule(Schedule):
 
     def duties_for_doctor(self, doctor: Doctor) -> Iterator[Duty]:
         return (duty for duty in self.cells() if doctor in duty)
+
+    def copy_empty(self) -> Self:
+        return self.__class__(self.month, self.year, self.positions)
 
 
 class AvailableDoctorList(Cell, list):

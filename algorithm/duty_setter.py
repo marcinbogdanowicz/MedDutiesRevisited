@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import random
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Iterator
 
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import DutySchedule
@@ -63,6 +64,7 @@ class DutySetter:
             return
 
         self._assign_requested_duties()
+        self._assign_duties()
 
         # TODO: Finish
 
@@ -99,6 +101,10 @@ class DutySetter:
         setter = RequestedDutiesSetter(self.doctors, self.schedule)
         setter.set_duties()
 
+    def _assign_duties(self) -> None:
+        algorithm = Algorithm(self.doctors, self.schedule)
+        algorithm.set_duties()
+
 
 class RequestedDutiesSetter:
     def __init__(self, doctors: list[Doctor], schedule: DutySchedule) -> None:
@@ -128,3 +134,103 @@ class RequestedDutiesSetter:
                 result[requested_day][doctor] = possible_positions
 
         return result
+
+
+@dataclass(slots=True)
+class Node:
+    day_number: int | None
+    doctors: tuple[Doctor, ...] | None
+    strain: int
+    parent: Node | None
+
+    @classmethod
+    def get_empty(cls) -> Node:
+        return cls(day_number=None, doctors=None, strain=0, parent=None)
+
+    def get_doctors_with_positions(self) -> Iterator[int, int]:
+        return ((doctor, position) for doctor, position in enumerate(self.doctors, start=1))
+
+    @cached_property
+    def total_strain(self) -> int:
+        if self.parent is None:
+            return self.strain
+
+        return self.strain + self.parent.total_strain
+
+    @cached_property
+    def days_set(self) -> int:
+        if self.parent is None:
+            return 0
+
+        return 1 + self.parent.days_set
+
+
+class Algorithm:
+    def __init__(self, doctors: list[Doctor], schedule: DutySchedule) -> None:
+        self.doctors = doctors
+        self.schedule = schedule
+
+        self.frontier = deque()
+
+        self.best_node = None
+        self.steps = 0
+
+    def set_duties(self) -> None:
+        self._initialize_frontier()
+
+        while True:
+            self.steps += 1
+            if not self.frontier:
+                raise CantSetDutiesError('Could not set duties.')
+
+            node = self.frontier.pop()
+
+            if self._is_best_node(self, node):
+                self.best_node = node
+
+            if self._are_all_duties_set(node):
+                self.best_node = node
+                break
+
+            self._expand(node)
+
+        # TODO: Finish - set duties, control max steps etc.
+
+    def _initialize_frontier(self) -> None:
+        initial_node = Node.get_empty()
+        self.frontier.append(initial_node)
+
+    def _is_best_node(self, node: Node) -> bool:
+        if self.best_node is None:
+            return True
+
+        if node.days_set > self.best_node.days_set:
+            return True
+
+        if node.days_set == self.best_node.days_set and node.total_strain < self.best_node.total_strain:
+            return True
+
+        return False
+
+    def _are_all_duties_set(self, node: Node) -> bool:
+        return node.days_set == len(self.schedule)
+
+    def _expand(self, node: Node) -> None:
+        nodes = self._get_nodes(node)
+
+        # TODO Add new nodes to the frontier
+
+    def _get_nodes(self, node: Node) -> list[Node]:
+        schedule = self._construct_schedule(node)
+        # TODO: Finish
+
+    def _construct_schedule(self, node: Node) -> DutySchedule:
+        schedule = self.schedule.copy_empty()
+
+        while node.parent:
+            for doctor, position in node.get_doctors_with_positions():
+                schedule[node.day_number, position].update(doctor)
+
+            node = node.parent
+
+        return schedule
