@@ -149,7 +149,7 @@ class DoctorAvailabilityHelper:
             for doctor in doctors:
                 if not self._has_doctor_received_duties_on_adjacent_days(
                     doctor, day.number
-                ) and doctor.preferences.can_accept_duty_on_day(day):
+                ) and doctor.can_accept_duty_on_day(day):
                     available_free_positions = free_positions & set(doctor.preferences.preferred_positions)
                     for position in available_free_positions:
                         availability_schedule[day.number, position].append(doctor)

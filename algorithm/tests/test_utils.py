@@ -160,6 +160,38 @@ class DoctorAvailabilityHelperTests(TestCase):
         self.assertIn(self.doctor_1, availability_schedule[5, 1])
         self.assertIn(self.doctor_1, availability_schedule[5, 2])
 
+    def test_previous_month_duties(self):
+        self.doctor_1.last_month_duties = [11, 23]
+
+        availability_schedule = self.helper.get_availability_schedule()
+
+        self.assertIn(self.doctor_1, availability_schedule[1, 1])
+        self.assertIn(self.doctor_1, availability_schedule[1, 2])
+
+        self.doctor_1.last_month_duties.append(31)
+        del self.doctor_1._can_take_duty_on_first_day_of_month
+
+        availability_schedule = self.helper.get_availability_schedule()
+
+        self.assertNotIn(self.doctor_1, availability_schedule[1, 1])
+        self.assertNotIn(self.doctor_1, availability_schedule[1, 2])
+
+    def test_next_month_duties(self):
+        self.doctor_1.next_month_duties = [11, 23]
+
+        availability_schedule = self.helper.get_availability_schedule()
+
+        self.assertIn(self.doctor_1, availability_schedule[31, 1])
+        self.assertIn(self.doctor_1, availability_schedule[31, 2])
+
+        self.doctor_1.next_month_duties.append(1)
+        del self.doctor_1._can_take_duty_on_last_day_of_month
+
+        availability_schedule = self.helper.get_availability_schedule()
+
+        self.assertNotIn(self.doctor_1, availability_schedule[31, 1])
+        self.assertNotIn(self.doctor_1, availability_schedule[31, 2])
+
     def test_mix(self):
         self.doctor_1.preferences.preferred_positions = [1]
         self.doctor_1.preferences.preferred_weekdays = [2]
