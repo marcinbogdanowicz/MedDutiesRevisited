@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import date
+from functools import cached_property
 from itertools import chain
 from typing import Any, Iterator, Self
 
@@ -24,6 +25,10 @@ class Day:
 
         self.category = self._get_category()
         self.strain_points = self._get_strain_points()
+
+    @cached_property
+    def is_last_day_of_month(self) -> bool:
+        return self.number == get_number_of_days_in_month(self.month, self.year)
 
     def _to_date(self) -> date:
         return date(self.year, self.month, self.number)
@@ -207,6 +212,10 @@ class DutySchedule(Schedule):
 
 
 class AvailableDoctorList(Cell, list):
+    def __init__(self, day: Day, position: int) -> None:
+        super().__init__(day, position)
+        self.is_set = False
+
     def __repr__(self) -> str:
         return f'{super().__repr__()}: {list.__repr__(self)}'
 
@@ -219,6 +228,18 @@ class DoctorAvailabilityScheduleRow(ScheduleRow):
 
     def doctors_for_all_positions(self) -> set[Doctor]:
         return self.doctors_for_positions(*range(1, len(self) + 1))
+
+    def positions_for_doctor(self, doctor: Doctor) -> Iterator[int]:
+        return (position.position for position in self if doctor in position)
+
+    @property
+    def is_set(self) -> bool:
+        return all(position.is_set for position in self)
+
+    @property
+    def average_doctors_per_free_position(self) -> float:
+        doctors_counts = [len(position) for position in self if not position.is_set]
+        return sum(doctors_counts) / len(doctors_counts) if doctors_counts else 0
 
 
 class DoctorAvailabilitySchedule(Schedule):

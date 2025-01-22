@@ -4,6 +4,8 @@ from datetime import date, timedelta
 from functools import cached_property
 from typing import TYPE_CHECKING, Sequence
 
+from algorithm.enums import Weekday
+
 if TYPE_CHECKING:
     from algorithm.schedule import Day
 
@@ -80,3 +82,7 @@ class DoctorsDutyPreferences:
         self.preferred_weekdays = preferred_weekdays
         self.preferred_positions = preferred_positions
         self.maximum_accepted_duties = maximum_accepted_duties
+
+    @cached_property
+    def no_duties_on_weekends(self) -> bool:
+        return Weekday.SATURDAY not in self.preferred_weekdays and Weekday.SUNDAY not in self.preferred_weekdays

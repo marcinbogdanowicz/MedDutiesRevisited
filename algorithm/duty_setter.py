@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Iterator
 
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import DutySchedule
-from algorithm.utils import unique_product
+from algorithm.utils import DoctorAvailabilityHelper, DutyStrainEvaluator, unique_product
 from algorithm.validators import (
     BidailyDoctorAvailabilityValidator,
     DailyDoctorAvailabilityValidator,
@@ -19,6 +19,7 @@ from algorithm.validators import (
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
+    from algorithm.schedule import Day, DoctorAvailabilitySchedule, DoctorAvailabilityScheduleRow
     from algorithm.validators import BaseDutySettingValidator
 
 
@@ -175,6 +176,8 @@ class Algorithm:
         self.best_node = None
         self.steps = 0
 
+        self._strain_evaluator = None
+
     def set_duties(self) -> None:
         self._initialize_frontier()
 
@@ -222,6 +225,12 @@ class Algorithm:
 
     def _get_nodes(self, node: Node) -> list[Node]:
         schedule = self._construct_schedule(node)
+        doctor_availability_schedule = DoctorAvailabilityHelper(self.doctors, schedule).get_availability_schedule()
+        day = self._get_day_with_least_available_doctors_per_free_position(doctor_availability_schedule)
+
+        availability_per_position = doctor_availability_schedule[day.number]
+        strain_table = self._get_strain_table(day, availability_per_position, schedule)
+
         # TODO: Finish
 
     def _construct_schedule(self, node: Node) -> DutySchedule:
@@ -234,3 +243,25 @@ class Algorithm:
             node = node.parent
 
         return schedule
+
+    def _get_day_with_least_available_doctors_per_free_position(
+        self, availability_schedule: DoctorAvailabilitySchedule
+    ) -> Day:
+        unset_rows = (row for row in availability_schedule if not row.is_set)
+        row_with_least_doctors_per_free_position = min(
+            unset_rows,
+            key=lambda row: row.average_doctors_per_free_position,
+        )
+        return row_with_least_doctors_per_free_position.day
+
+    def _get_strain_table(
+        self, day: Day, availability_per_position: DoctorAvailabilityScheduleRow, current_schedule: DutySchedule
+    ) -> dict[int, dict[Doctor, int]]:
+        evaluator = self._get_strain_evaluator()
+        return evaluator.get_strain_table(day, current_schedule, availability_per_position)
+
+    def _get_strain_evaluator(self) -> DutyStrainEvaluator:
+        if self._strain_evaluator is None:
+            self._strain_evaluator = DutyStrainEvaluator(self.month, self.year, self.schedule.positions, self.doctors)
+
+        return self._strain_evaluator

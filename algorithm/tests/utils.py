@@ -79,7 +79,24 @@ class ExpectedError(Exception):
     pass
 
 
-class InitDutySetterTestMixin:
+class PreferencesKwargsTestMixin:
+    year: int
+    month: int
+    duty_positions: int
+
+    def get_init_preferences_kwargs(self):
+        return {
+            "year": self.year,
+            "month": self.month,
+            "exceptions": [],
+            "requested_days": [],
+            "preferred_weekdays": list(range(7)),
+            "preferred_positions": list(range(1, self.duty_positions + 1)),
+            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.month, self.year),
+        }
+
+
+class InitDutySetterTestMixin(PreferencesKwargsTestMixin):
     year: int
     month: int
     duty_positions: int
@@ -98,13 +115,4 @@ class InitDutySetterTestMixin:
         # Unpack doctors to self.doctor_{i} properties
         exec('\n'.join(f'self.doctor_{i} = doctors[{i} - 1]' for i in range(1, self.doctors_count + 1)))
 
-    def get_init_preferences_kwargs(self):
-        return {
-            "year": self.year,
-            "month": self.month,
-            "exceptions": [],
-            "requested_days": [],
-            "preferred_weekdays": list(range(7)),
-            "preferred_positions": list(range(1, self.duty_positions + 1)),
-            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.month, self.year),
-        }
+        self.doctors = doctors
