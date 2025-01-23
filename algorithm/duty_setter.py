@@ -148,6 +148,9 @@ class Node:
     def get_empty(cls) -> Node:
         return cls(day_number=None, doctors=None, strain=0, parent=None)
 
+    def is_empty(self) -> bool:
+        return self.day_number is None and self.doctors is None
+
     def get_doctors_with_positions(self) -> Iterator[int, int]:
         return ((doctor, position) for doctor, position in enumerate(self.doctors, start=1))
 
@@ -167,7 +170,7 @@ class Node:
 
 
 class Algorithm:
-    def __init__(self, doctors: list[Doctor], schedule: DutySchedule) -> None:
+    def __init__(self, doctors: list[Doctor], schedule: DutySchedule, depth: int = 2) -> None:
         self.doctors = doctors
         self.schedule = schedule
 
@@ -175,8 +178,13 @@ class Algorithm:
 
         self.best_node = None
         self.steps = 0
+        self.depth = depth
 
-        self._strain_evaluator = None
+        self.strain_evaluator = None
+
+    @property
+    def combined_doctors_per_position(self) -> int:
+        return self.depth * self.schedule.positions
 
     def set_duties(self) -> None:
         self._initialize_frontier()
@@ -184,7 +192,7 @@ class Algorithm:
         while True:
             self.steps += 1
             if not self.frontier:
-                raise CantSetDutiesError('Could not set duties.')
+                break
 
             node = self.frontier.pop()
 
@@ -197,13 +205,23 @@ class Algorithm:
 
             self._expand(node)
 
-        # TODO: Finish - set duties, control max steps etc.
+            if self.steps > 2 * len(self.schedule) and self.combined_doctors_per_position < len(self.doctors):
+                return Algorithm(self.doctors, self.schedule, self.depth + 1).set_duties()
+            elif self.steps > self.max_steps:
+                break
+
+        if self.best_node:
+            final_schedule = self._construct_schedule(self.best_node)
+            self.schedule.merge(final_schedule)
 
     def _initialize_frontier(self) -> None:
         initial_node = Node.get_empty()
         self.frontier.append(initial_node)
 
     def _is_best_node(self, node: Node) -> bool:
+        if node.is_empty():
+            return False
+
         if self.best_node is None:
             return True
 
@@ -238,7 +256,12 @@ class Algorithm:
         for available_doctors_list in available_doctors_per_position:
             available_doctors_list.sort(key=lambda doctor: strain_per_doctor[doctor])
 
-        doctors_combinations = unique_product(*available_doctors_per_position)
+        doctors_combinations = unique_product(
+            *(
+                available_doctors[: self.combined_doctors_per_position]
+                for available_doctors in available_doctors_per_position
+            )
+        )
 
         if day.number > 1:
             previous_day_doctors = doctor_availability_schedule[day.number - 1].doctors_for_all_positions()
@@ -290,10 +313,10 @@ class Algorithm:
         return evaluator.get_strains(day, current_schedule, available_doctors)
 
     def _get_strain_evaluator(self) -> DutyStrainEvaluator:
-        if self._strain_evaluator is None:
-            self._strain_evaluator = DutyStrainEvaluator(self.month, self.year, self.schedule.positions, self.doctors)
+        if self.strain_evaluator is None:
+            self.strain_evaluator = DutyStrainEvaluator(self.month, self.year, self.schedule.positions, self.doctors)
 
-        return self._strain_evaluator
+        return self.strain_evaluator
 
     def _drop_conflicting_combinations(
         self,

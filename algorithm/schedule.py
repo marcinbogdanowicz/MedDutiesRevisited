@@ -210,6 +210,15 @@ class DutySchedule(Schedule):
     def copy_empty(self) -> Self:
         return self.__class__(self.month, self.year, self.positions)
 
+    def merge(self, other: DutySchedule) -> None:
+        for cell in other.cells():
+            self[cell.day.number][cell.position].update(
+                doctor=cell.doctor,
+                pk=cell.pk,
+                strain_points=cell.strain_points,
+                set_by_user=cell.set_by_user,
+            )
+
 
 class AvailableDoctorList(Cell, list):
     def __init__(self, day: Day, position: int) -> None:
