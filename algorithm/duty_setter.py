@@ -117,7 +117,7 @@ class RequestedDutiesSetter:
 
         for day_number, accepted_positions_per_doctor in daily_accepted_positions_per_doctor.items():
             # Combinations elements order will always follow the order of doctors.
-            position_combinations = unique_product(*accepted_positions_per_doctor.values())
+            position_combinations = list(unique_product(*accepted_positions_per_doctor.values()))
 
             positions = random.choice(position_combinations)
             doctors = accepted_positions_per_doctor.keys()
@@ -246,8 +246,6 @@ class Algorithm:
             next_day_doctors = doctor_availability_schedule[day.number + 1].doctors_for_all_positions()
             doctors_combinations = self._drop_conflicting_combinations(doctors_combinations, next_day_doctors)
 
-        random.shuffle(doctors_combinations)  # Prevent patterns
-
         nodes = [
             Node(
                 day_number=day.number,
@@ -257,6 +255,7 @@ class Algorithm:
             )
             for doctors_combination in doctors_combinations
         ]
+        random.shuffle(nodes)  # Prevent patterns
         nodes.sort(key=lambda node: node.strain)
 
         return nodes
@@ -298,12 +297,12 @@ class Algorithm:
         self,
         doctors_combinations: list[tuple[Doctor, ...]],
         other_day_doctors: set[Doctor],
-    ) -> list[tuple[Doctor, ...]]:
+    ) -> Iterator[tuple[Doctor, ...]]:
         def is_conflicting_with_other_day_availability(combination: tuple[Doctor, ...]) -> bool:
             return len(other_day_doctors - set(combination)) < self.schedule.positions
 
-        return [
+        return (
             combination
             for combination in doctors_combinations
             if not is_conflicting_with_other_day_availability(combination)
-        ]
+        )
