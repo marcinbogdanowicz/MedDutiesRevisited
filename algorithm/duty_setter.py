@@ -180,7 +180,7 @@ class Node:
 
 
 class Algorithm:
-    max_steps = 5_000
+    max_steps = 1_000
 
     def __init__(self, doctors: list[Doctor], schedule: DutySchedule, depth: int = 2) -> None:
         self.doctors = doctors
