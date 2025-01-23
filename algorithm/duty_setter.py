@@ -221,7 +221,9 @@ class Algorithm:
     def _expand(self, node: Node) -> None:
         nodes = self._get_nodes(node)
 
-        # TODO Add new nodes to the frontier
+        first_node = nodes.pop(0)
+        self.frontier.append(first_node)
+        self.frontier.extendleft(nodes)
 
     def _get_nodes(self, node: Node) -> list[Node]:
         schedule = self._construct_schedule(node)
