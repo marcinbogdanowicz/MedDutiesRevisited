@@ -185,7 +185,7 @@ class Duty(Cell):
     def to_dict(self) -> dict[str, Any]:
         return {
             "pk": self.pk,
-            "doctor_pk": self.doctor.pk,
+            "doctor_pk": self.doctor.pk if self.doctor else None,
             "day": self.day.number,
             "position": self.position,
             "strain_points": self.strain_points,
@@ -232,7 +232,7 @@ class DutySchedule(Schedule):
 
     @property
     def is_filled(self) -> bool:
-        return all(duty.is_set for duty in self.cells)
+        return all(duty.is_set for duty in self.cells())
 
     def to_dict(self) -> dict[str, Any]:
         result = defaultdict(dict)

@@ -147,7 +147,7 @@ class RequestedDutiesSetter:
         return result
 
 
-@dataclass(slots=True)
+@dataclass
 class Node:
     day_number: int | None
     doctors: tuple[Doctor, ...] | None
@@ -161,8 +161,8 @@ class Node:
     def is_empty(self) -> bool:
         return self.day_number is None and self.doctors is None
 
-    def get_doctors_with_positions(self) -> Iterator[int, int]:
-        return ((doctor, position) for doctor, position in enumerate(self.doctors, start=1))
+    def get_doctors_with_positions(self) -> Iterator[Doctor, int]:
+        return ((doctor, position) for position, doctor in enumerate(self.doctors, start=1))
 
     @cached_property
     def total_strain(self) -> int:
@@ -180,6 +180,8 @@ class Node:
 
 
 class Algorithm:
+    max_steps = 5_000
+
     def __init__(self, doctors: list[Doctor], schedule: DutySchedule, depth: int = 2) -> None:
         self.doctors = doctors
         self.schedule = schedule
@@ -206,7 +208,7 @@ class Algorithm:
 
             node = self.frontier.pop()
 
-            if self._is_best_node(self, node):
+            if self._is_best_node(node):
                 self.best_node = node
 
             if self._are_all_duties_set(node):
@@ -324,7 +326,9 @@ class Algorithm:
 
     def _get_strain_evaluator(self) -> DutyStrainEvaluator:
         if self.strain_evaluator is None:
-            self.strain_evaluator = DutyStrainEvaluator(self.month, self.year, self.schedule.positions, self.doctors)
+            self.strain_evaluator = DutyStrainEvaluator(
+                self.schedule.year, self.schedule.month, self.schedule.positions, self.doctors
+            )
 
         return self.strain_evaluator
 
