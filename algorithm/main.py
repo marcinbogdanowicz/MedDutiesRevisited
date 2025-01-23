@@ -39,7 +39,7 @@ def create_duty_setter(validated_data: dict[str, Any]) -> DutySetter:
     return duty_setter
 
 
-def main(data: dict[str, Any]) -> None:
+def main(data: dict[str, Any]) -> dict[str, Any]:
     validated_data = validate_data(data)
 
     duty_setter = create_duty_setter(validated_data)
