@@ -14,7 +14,7 @@ from algorithm.enums import StrainModifier, Weekday
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
-    from algorithm.schedule import Day, DoctorAvailabilitySchedule, DoctorAvailabilityScheduleRow, DutySchedule
+    from algorithm.schedule import Day, DoctorAvailabilitySchedule, DutySchedule
 
 
 def get_week_number_in_month(date: date) -> int:
@@ -398,18 +398,8 @@ class DutyStrainEvaluator:
         self.average_duties_per_doctor = self._get_average_duties_per_doctor(positions, all_doctors)
         self.average_max_duties_preference = self._get_average_max_duties_preference(all_doctors)
 
-    def get_strain_table(
-        self, day: Day, schedule: DutySchedule, availability_per_position: DoctorAvailabilityScheduleRow
-    ) -> dict[int, dict[Doctor, int]]:
-        strain_table = defaultdict(dict)
-
-        doctors = availability_per_position.doctors_for_all_positions()
-        for doctor in doctors:
-            strain = self._get_strain(day, doctor, schedule)
-            for position in availability_per_position.positions_for_doctor(doctor):
-                strain_table[position][doctor] = strain
-
-        return strain_table
+    def get_strains(self, day: Day, schedule: DutySchedule, available_doctors: list[Doctor]) -> dict[Doctor, int]:
+        return {doctor: self._get_strain(day, doctor, schedule) for doctor in available_doctors}
 
     def _get_strain(self, day: Day, doctor: Doctor, schedule: DutySchedule) -> int:
         strain = day.strain_points

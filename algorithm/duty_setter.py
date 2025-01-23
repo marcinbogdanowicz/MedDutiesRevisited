@@ -19,7 +19,7 @@ from algorithm.validators import (
 
 if TYPE_CHECKING:
     from algorithm.doctor import Doctor
-    from algorithm.schedule import Day, DoctorAvailabilitySchedule, DoctorAvailabilityScheduleRow
+    from algorithm.schedule import Day, DoctorAvailabilitySchedule
     from algorithm.validators import BaseDutySettingValidator
 
 
@@ -226,12 +226,40 @@ class Algorithm:
     def _get_nodes(self, node: Node) -> list[Node]:
         schedule = self._construct_schedule(node)
         doctor_availability_schedule = DoctorAvailabilityHelper(self.doctors, schedule).get_availability_schedule()
+
         day = self._get_day_with_least_available_doctors_per_free_position(doctor_availability_schedule)
+        available_doctors_per_position = doctor_availability_schedule[day.number]
 
-        availability_per_position = doctor_availability_schedule[day.number]
-        strain_table = self._get_strain_table(day, availability_per_position, schedule)
+        available_doctors = available_doctors_per_position.doctors_for_all_positions()
+        strain_per_doctor = self._get_strain_per_doctor(day, schedule, available_doctors)
 
-        # TODO: Finish
+        for available_doctors_list in available_doctors_per_position:
+            available_doctors_list.sort(key=lambda doctor: strain_per_doctor[doctor])
+
+        doctors_combinations = unique_product(*available_doctors_per_position)
+
+        if day.number > 1:
+            previous_day_doctors = doctor_availability_schedule[day.number - 1].doctors_for_all_positions()
+            doctors_combinations = self._drop_conflicting_combinations(doctors_combinations, previous_day_doctors)
+
+        if day.number < len(self.schedule):
+            next_day_doctors = doctor_availability_schedule[day.number + 1].doctors_for_all_positions()
+            doctors_combinations = self._drop_conflicting_combinations(doctors_combinations, next_day_doctors)
+
+        random.shuffle(doctors_combinations)  # Prevent patterns
+
+        nodes = [
+            Node(
+                day_number=day.number,
+                doctors=doctors_combination,
+                strain=sum(strain_per_doctor[doctor] for doctor in doctors_combination),
+                parent=node,
+            )
+            for doctors_combination in doctors_combinations
+        ]
+        nodes.sort(key=lambda node: node.strain)
+
+        return nodes
 
     def _construct_schedule(self, node: Node) -> DutySchedule:
         schedule = self.schedule.copy_empty()
@@ -254,14 +282,28 @@ class Algorithm:
         )
         return row_with_least_doctors_per_free_position.day
 
-    def _get_strain_table(
-        self, day: Day, availability_per_position: DoctorAvailabilityScheduleRow, current_schedule: DutySchedule
-    ) -> dict[int, dict[Doctor, int]]:
+    def _get_strain_per_doctor(
+        self, day: Day, current_schedule: DutySchedule, available_doctors: list[Doctor]
+    ) -> dict[Doctor, int]:
         evaluator = self._get_strain_evaluator()
-        return evaluator.get_strain_table(day, current_schedule, availability_per_position)
+        return evaluator.get_strains(day, current_schedule, available_doctors)
 
     def _get_strain_evaluator(self) -> DutyStrainEvaluator:
         if self._strain_evaluator is None:
             self._strain_evaluator = DutyStrainEvaluator(self.month, self.year, self.schedule.positions, self.doctors)
 
         return self._strain_evaluator
+
+    def _drop_conflicting_combinations(
+        self,
+        doctors_combinations: list[tuple[Doctor, ...]],
+        other_day_doctors: set[Doctor],
+    ) -> list[tuple[Doctor, ...]]:
+        def is_conflicting_with_other_day_availability(combination: tuple[Doctor, ...]) -> bool:
+            return len(other_day_doctors - set(combination)) < self.schedule.positions
+
+        return [
+            combination
+            for combination in doctors_combinations
+            if not is_conflicting_with_other_day_availability(combination)
+        ]
