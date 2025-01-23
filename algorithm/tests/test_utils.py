@@ -3,7 +3,7 @@ from unittest.mock import Mock, call, patch
 
 from algorithm.duty_setter import DutySetter
 from algorithm.enums import StrainModifier, Weekday
-from algorithm.schedule import Day, DoctorAvailabilityScheduleRow, DutySchedule
+from algorithm.schedule import Day, DutySchedule
 from algorithm.tests.utils import InitDutySetterTestMixin, PreferencesKwargsTestMixin, doctor_factory
 from algorithm.utils import (
     AvoidSaturdayAfterThursdayModifier,
@@ -293,7 +293,7 @@ class DutyStrainEvaluatorTests(InitDutySetterTestMixin, TestCase):
         self.assertEqual(call.get(), mock_strain_modifier.mock_calls[-1])
 
     @patch("algorithm.utils.issubclass", new=Mock(return_value=False))
-    def test_get_strain_table(self):
+    def test_get_strains(self):
         evaluator = DutyStrainEvaluator(self.year, self.month, self.schedule.positions, self.doctors)
         day = Day(1, self.month, self.year)
 
@@ -302,19 +302,10 @@ class DutyStrainEvaluatorTests(InitDutySetterTestMixin, TestCase):
         mock_strain_modifier.get.return_value = 1
         evaluator.strain_modifiers = [mock_strain_modifier]
 
-        availability_per_position = DoctorAvailabilityScheduleRow(day, self.duty_positions)
-        availability_per_position[1].extend(self.doctors[:3])
-        availability_per_position[2].extend(self.doctors[3:5])
-        availability_per_position[3].extend(self.doctors)
-
-        strain_table = evaluator.get_strain_table(day, self.schedule, availability_per_position)
-        for strain_per_doctor in strain_table.values():
-            for strain in strain_per_doctor.values():
-                self.assertEqual(day.strain_points + 1, strain)
-
-        self.assertCountEqual(list(strain_table[1].keys()), self.doctors[:3])
-        self.assertCountEqual(list(strain_table[2].keys()), self.doctors[3:5])
-        self.assertCountEqual(list(strain_table[3].keys()), self.doctors)
+        strains = evaluator.get_strains(day, self.schedule, self.doctors)
+        self.assertCountEqual(list(strains), self.doctors)
+        for strain in strains.values():
+            self.assertEqual(day.strain_points + 1, strain)
 
         self.assertEqual(14, len(mock_strain_modifier.mock_calls))
 
