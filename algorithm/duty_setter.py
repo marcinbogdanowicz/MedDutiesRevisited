@@ -31,7 +31,10 @@ class Result:
     duties: DutySchedule
 
     def to_dict(self) -> dict[str, Any]:
-        return {}  # TODO implement
+        result = vars(self).copy()
+        result["duties"] = self.duties.to_dict()
+
+        return result
 
 
 class DutySetter:
@@ -83,6 +86,13 @@ class DutySetter:
                 errors=self.errors,
                 duties=self.schedule,
             )
+
+        return Result(
+            were_any_duties_set=True,
+            were_all_duties_set=self.schedule.is_filled,
+            errors=self.errors,
+            duties=self.schedule,
+        )
 
     def check_if_duties_can_be_set(self) -> bool:
         self.errors = []

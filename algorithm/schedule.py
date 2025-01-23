@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from datetime import date
 from functools import cached_property
 from itertools import chain
@@ -181,6 +182,16 @@ class Duty(Cell):
     def is_set(self) -> bool:
         return self.doctor is not None
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "pk": self.pk,
+            "doctor_pk": self.doctor.pk,
+            "day": self.day.number,
+            "position": self.position,
+            "strain_points": self.strain_points,
+            "set_by_user": self.set_by_user,
+        }
+
     def __repr__(self) -> str:
         return f'{super().__repr__()}: {self.doctor}'
 
@@ -218,6 +229,17 @@ class DutySchedule(Schedule):
                 strain_points=cell.strain_points,
                 set_by_user=cell.set_by_user,
             )
+
+    @property
+    def is_filled(self) -> bool:
+        return all(duty.is_set for duty in self.cells)
+
+    def to_dict(self) -> dict[str, Any]:
+        result = defaultdict(dict)
+        for duty in self.cells():
+            result[duty.day.number][duty.position] = duty.to_dict()
+
+        return result
 
 
 class AvailableDoctorList(Cell, list):
