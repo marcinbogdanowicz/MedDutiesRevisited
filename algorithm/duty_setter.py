@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING, Any, Iterator
 
 from algorithm.exceptions import CantSetDutiesError
 from algorithm.schedule import DutySchedule
-from algorithm.utils import DoctorAvailabilityHelper, DutyStrainEvaluator, unique_product
+from algorithm.strain import DutyStrainEvaluator
+from algorithm.utils import DoctorAvailabilityHelper, unique_product
 from algorithm.validators import (
     BidailyDoctorAvailabilityValidator,
     DailyDoctorAvailabilityValidator,

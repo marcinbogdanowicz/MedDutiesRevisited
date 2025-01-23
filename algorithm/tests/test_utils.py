@@ -4,11 +4,9 @@ from unittest.mock import Mock, call, patch
 from algorithm.duty_setter import DutySetter
 from algorithm.enums import StrainModifier, Weekday
 from algorithm.schedule import Day, DutySchedule
-from algorithm.tests.utils import InitDutySetterTestMixin, PreferencesKwargsTestMixin, doctor_factory
-from algorithm.utils import (
+from algorithm.strain import (
     AvoidSaturdayAfterThursdayModifier,
     CloseDutiesModifier,
-    DoctorAvailabilityHelper,
     DontStealSundaysModifier,
     DutyStrainEvaluator,
     IsThursdayOrdinaryModifier,
@@ -17,8 +15,9 @@ from algorithm.utils import (
     NextMonthStrainModifier,
     PreviousMonthStrainModifier,
     RemainingDutiesCountModifier,
-    get_max_number_of_duties_for_month,
 )
+from algorithm.tests.utils import InitDutySetterTestMixin, PreferencesKwargsTestMixin, doctor_factory
+from algorithm.utils import DoctorAvailabilityHelper, get_max_number_of_duties_for_month
 
 
 class UtilsTests(TestCase):
@@ -278,7 +277,7 @@ class DutyStrainEvaluatorTests(InitDutySetterTestMixin, TestCase):
         evaluator = DutyStrainEvaluator(self.year, self.month, self.schedule.positions, self.doctors[:-2])
         self.assertEqual(7, evaluator.average_max_duties_preference)
 
-    @patch("algorithm.utils.issubclass", new=Mock(return_value=False))
+    @patch("algorithm.strain.issubclass", new=Mock(return_value=False))
     def test_get_strain(self):
         evaluator = DutyStrainEvaluator(self.year, self.month, self.schedule.positions, self.doctors)
         day = Day(1, self.month, self.year)
@@ -292,7 +291,7 @@ class DutyStrainEvaluatorTests(InitDutySetterTestMixin, TestCase):
         self.assertEqual(2, len(mock_strain_modifier.mock_calls))
         self.assertEqual(call.get(), mock_strain_modifier.mock_calls[-1])
 
-    @patch("algorithm.utils.issubclass", new=Mock(return_value=False))
+    @patch("algorithm.strain.issubclass", new=Mock(return_value=False))
     def test_get_strains(self):
         evaluator = DutyStrainEvaluator(self.year, self.month, self.schedule.positions, self.doctors)
         day = Day(1, self.month, self.year)
