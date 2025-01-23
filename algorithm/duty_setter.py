@@ -249,11 +249,10 @@ class Algorithm:
         return node.days_set == len(self.schedule)
 
     def _expand(self, node: Node) -> None:
-        nodes = self._get_nodes(node)
-
-        first_node = nodes.pop(0)
-        self.frontier.append(first_node)
-        self.frontier.extendleft(nodes)
+        if nodes := self._get_nodes(node):
+            first_node = nodes.pop(0)
+            self.frontier.append(first_node)
+            self.frontier.extendleft(nodes)
 
     def _get_nodes(self, node: Node) -> list[Node]:
         schedule = self._construct_schedule(node)
