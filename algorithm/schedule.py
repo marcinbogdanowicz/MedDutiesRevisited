@@ -29,7 +29,7 @@ class Day:
 
     @cached_property
     def is_last_day_of_month(self) -> bool:
-        return self.number == get_number_of_days_in_month(self.month, self.year)
+        return self.number == get_number_of_days_in_month(self.year, self.month)
 
     def _to_date(self) -> date:
         return date(self.year, self.month, self.number)
@@ -112,11 +112,11 @@ class ScheduleRow(ContainerSequence, ABC):
 
 
 class Schedule(ContainerSequence, ABC):
-    def __init__(self, month: int, year: int, positions: int) -> None:
-        self.month = month
+    def __init__(self, year: int, month: int, positions: int) -> None:
         self.year = year
+        self.month = month
 
-        self.days = get_number_of_days_in_month(month, year)
+        self.days = get_number_of_days_in_month(year, month)
         self.positions = positions
 
         self._members = {
@@ -219,7 +219,7 @@ class DutySchedule(Schedule):
         return (duty for duty in self.cells() if doctor in duty)
 
     def copy_empty(self) -> Self:
-        return self.__class__(self.month, self.year, self.positions)
+        return self.__class__(self.year, self.month, self.positions)
 
     def merge(self, other: DutySchedule) -> None:
         for cell in other.cells():

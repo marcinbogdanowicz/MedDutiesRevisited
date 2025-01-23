@@ -23,12 +23,12 @@ def get_week_number_in_month(date: date) -> int:
     return week_of_year_number - first_week_of_month_number
 
 
-def get_number_of_days_in_month(month: int, year: int) -> int:
+def get_number_of_days_in_month(year: int, month: int) -> int:
     return calendar.monthrange(year, month)[1]
 
 
-def get_max_number_of_duties_for_month(month: int, year: int) -> int:
-    return get_number_of_days_in_month(month, year) // 2
+def get_max_number_of_duties_for_month(year: int, month: int) -> int:
+    return get_number_of_days_in_month(year, month) // 2
 
 
 def recursive_getattr(obj, attr, default=None):
@@ -137,7 +137,7 @@ class DoctorAvailabilityHelper:
         from algorithm.schedule import DoctorAvailabilitySchedule
 
         availability_schedule = DoctorAvailabilitySchedule(
-            self.duty_schedule.month, self.duty_schedule.year, self.duty_schedule.positions
+            self.duty_schedule.year, self.duty_schedule.month, self.duty_schedule.positions
         )
 
         for row in availability_schedule:
@@ -434,7 +434,7 @@ class DutyStrainEvaluator:
         return prev_month_last_day_dt.day
 
     def _get_current_month_length(self, year: int, month: int) -> int:
-        return get_number_of_days_in_month(month, year)
+        return get_number_of_days_in_month(year, month)
 
     def _get_average_duties_per_doctor(self, positions_count: int, doctors: list[Doctor]) -> float:
         return self.current_month_length * positions_count / len(doctors)

@@ -66,16 +66,16 @@ class Doctor:
 class DoctorsDutyPreferences:
     def __init__(
         self,
-        month: int,
         year: int,
+        month: int,
         exceptions: Sequence[int],
         requested_days: Sequence[int],
         preferred_weekdays: Sequence[int],
         preferred_positions: Sequence[int],
         maximum_accepted_duties: int,
     ) -> None:
-        self.month = month
         self.year = year
+        self.month = month
 
         self.exceptions = exceptions
         self.requested_days = requested_days

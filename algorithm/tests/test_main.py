@@ -27,7 +27,7 @@ class MainFunctionTests(TestCase):
         schedule = duty_setter.schedule
         self.assertEqual(schedule.year, input_data["year"])
         self.assertEqual(schedule.month, input_data["month"])
-        expected_days_count = get_number_of_days_in_month(input_data["month"], input_data["year"])
+        expected_days_count = get_number_of_days_in_month(input_data["year"], input_data["month"])
         self.assertEqual(expected_days_count, schedule.days)
         self.assertEqual(input_data["doctors_per_duty"], schedule.positions)
 

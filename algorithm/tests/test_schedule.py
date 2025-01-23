@@ -7,7 +7,7 @@ from algorithm.tests.utils import doctor_factory
 
 class DutyScheduleTests(TestCase):
     def test_schedule_init(self):
-        schedule = DutySchedule(1, 2025, 3)
+        schedule = DutySchedule(2025, 1, 3)
 
         self.assertEqual(31, schedule.days)
         self.assertEqual(3, schedule.positions)
@@ -16,7 +16,7 @@ class DutyScheduleTests(TestCase):
         self.assertTrue(all(len(row) == 3 for row in schedule))
 
     def test_accessing_cells(self):
-        schedule = DutySchedule(1, 2025, 3)
+        schedule = DutySchedule(2025, 1, 3)
 
         duty = schedule[1, 3]
         self.assertEqual(1, duty.day.number)
@@ -25,7 +25,7 @@ class DutyScheduleTests(TestCase):
         self.assertEqual(duty, schedule[1][3])
 
     def test_accessing_cells_errors(self):
-        schedule = DutySchedule(1, 2025, 3)
+        schedule = DutySchedule(2025, 1, 3)
 
         with self.assertRaises(KeyError):
             schedule[0, 2]
@@ -43,7 +43,7 @@ class DutyScheduleTests(TestCase):
             schedule[1:3]
 
     def test_immutability(self):
-        schedule = DutySchedule(1, 2025, 3)
+        schedule = DutySchedule(2025, 1, 3)
 
         with self.assertRaises(AttributeError):
             schedule[1] = ['duty', 'duty', 'duty']
@@ -56,7 +56,7 @@ class DutyScheduleTests(TestCase):
             schedule[1, 3] = 'duty'
 
     def test_cells_iterator(self):
-        schedule = DutySchedule(1, 2025, 3)
+        schedule = DutySchedule(2025, 1, 3)
 
         cells = list(schedule.cells())
         self.assertEqual(93, len(cells))

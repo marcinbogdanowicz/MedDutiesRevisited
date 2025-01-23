@@ -31,7 +31,7 @@ class UtilsTests(TestCase):
         ]
 
         for (month, year), expected_number in months_with_expected_results:
-            result = get_max_number_of_duties_for_month(month, year)
+            result = get_max_number_of_duties_for_month(year, month)
             self.assertEqual(result, expected_number)
 
 
@@ -328,7 +328,7 @@ class ModifierTestMixin(PreferencesKwargsTestMixin):
         self.doctor = doctor_factory()
         self.doctor.init_preferences(**self.get_init_preferences_kwargs())
 
-        self.schedule = DutySchedule(self.month, self.year, self.duty_positions)
+        self.schedule = DutySchedule(self.year, self.month, self.duty_positions)
 
     def get_day(self, number: int) -> Day:
         return Day(number, self.month, self.year)

@@ -18,7 +18,7 @@ def input_factory(
     duties_count: int = 0,
 ):
     positions = range(1, doctors_per_duty + 1)
-    accepted_duties = get_max_number_of_duties_for_month(month, year)
+    accepted_duties = get_max_number_of_duties_for_month(year, month)
 
     doctor_pks = list(range(1, doctors_count + 1))
     doctors = [
@@ -92,7 +92,7 @@ class PreferencesKwargsTestMixin:
             "requested_days": [],
             "preferred_weekdays": list(range(7)),
             "preferred_positions": list(range(1, self.duty_positions + 1)),
-            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.month, self.year),
+            "maximum_accepted_duties": get_max_number_of_duties_for_month(self.year, self.month),
         }
 
 

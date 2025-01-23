@@ -24,7 +24,7 @@ def create_duty_setter(validated_data: dict[str, Any]) -> DutySetter:
         preferences = doctor_data.pop("preferences")
 
         doctor = Doctor(**doctor_data)
-        doctor.init_preferences(month=month, year=year, **preferences)
+        doctor.init_preferences(year=year, month=month, **preferences)
 
         duty_setter.add_doctor(doctor)
 

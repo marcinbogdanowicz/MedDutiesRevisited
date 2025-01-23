@@ -48,7 +48,7 @@ class DutySetter:
 
     def __init__(self, year: int, month: int, doctors_per_duty: int) -> None:
         self.duty_positions = doctors_per_duty
-        self.schedule = DutySchedule(month, year, self.duty_positions)
+        self.schedule = DutySchedule(year, month, self.duty_positions)
 
         self.doctors = []
         self.errors = None

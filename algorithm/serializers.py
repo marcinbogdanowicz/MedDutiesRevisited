@@ -78,7 +78,7 @@ class InputSerializer(BaseModel):
             month = 12
             year -= 1
 
-        self._validate_provided_dates_are_within_months_length(month, year, date_list_doctor_attr='last_month_duties')
+        self._validate_provided_dates_are_within_months_length(year, month, date_list_doctor_attr='last_month_duties')
         return self
 
     @model_validator(mode='after')
@@ -90,28 +90,28 @@ class InputSerializer(BaseModel):
             month = 1
             year += 1
 
-        self._validate_provided_dates_are_within_months_length(month, year, date_list_doctor_attr='next_month_duties')
+        self._validate_provided_dates_are_within_months_length(year, month, date_list_doctor_attr='next_month_duties')
         return self
 
     @model_validator(mode='after')
     def validate_exceptions(self) -> Self:
         self._validate_provided_dates_are_within_months_length(
-            self.month, self.year, date_list_doctor_attr='preferences.exceptions'
+            self.year, self.month, date_list_doctor_attr='preferences.exceptions'
         )
         return self
 
     @model_validator(mode='after')
     def validate_requested_days(self) -> Self:
         self._validate_provided_dates_are_within_months_length(
-            self.month, self.year, date_list_doctor_attr='preferences.requested_days'
+            self.year, self.month, date_list_doctor_attr='preferences.requested_days'
         )
         return self
 
     def _validate_provided_dates_are_within_months_length(
-        self, month: int, year: int, date_list_doctor_attr: str
+        self, year: int, month: int, date_list_doctor_attr: str
     ) -> None:
         errors = ''
-        month_length = get_number_of_days_in_month(month, year)
+        month_length = get_number_of_days_in_month(year, month)
 
         def is_a_valid_day_number(number: int) -> bool:
             return 0 < number <= month_length
@@ -128,7 +128,7 @@ class InputSerializer(BaseModel):
 
     @model_validator(mode='after')
     def validate_duties(self) -> Self:
-        month_length = get_number_of_days_in_month(self.month, self.year)
+        month_length = get_number_of_days_in_month(self.year, self.month)
 
         def is_a_valid_day_number(number: int) -> bool:
             return 0 < number <= month_length
@@ -143,7 +143,7 @@ class InputSerializer(BaseModel):
 
     @model_validator(mode='after')
     def adjust_maximum_accepted_duties(self) -> Self:
-        max_number_of_duties = get_max_number_of_duties_for_month(self.month, self.year)
+        max_number_of_duties = get_max_number_of_duties_for_month(self.year, self.month)
         for doctor in self.doctors:
             preferences = doctor.preferences
             if preferences.maximum_accepted_duties > max_number_of_duties:

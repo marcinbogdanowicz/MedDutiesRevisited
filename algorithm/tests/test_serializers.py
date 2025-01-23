@@ -39,7 +39,7 @@ class SerializersTests(TestCase):
         validated_data = serializer.model_dump()
 
         maximum_accepted_duties = validated_data["doctors"][0]["preferences"]["maximum_accepted_duties"]
-        expected_maximum_accepted_duties = get_max_number_of_duties_for_month(self.data["month"], self.data["year"])
+        expected_maximum_accepted_duties = get_max_number_of_duties_for_month(self.data["year"], self.data["month"])
         self.assertEqual(maximum_accepted_duties, expected_maximum_accepted_duties)
 
     def test_manually_set_duties_validation(self):
