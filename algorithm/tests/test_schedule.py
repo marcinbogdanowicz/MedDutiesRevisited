@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from algorithm.enums import DayCategory, StrainPoints
+from algorithm.enums import StrainPoints
 from algorithm.schedule import Day, Duty, DutySchedule
 from algorithm.tests.utils import doctor_factory
 
@@ -66,21 +66,6 @@ class DutyScheduleTests(TestCase):
 
 
 class DayTests(TestCase):
-    def test_category(self):
-        day = Day(1, 1, 2025)
-        self.assertEqual(DayCategory.HOLIDAY, day.category)
-
-        day = Day(2, 1, 2025)
-        self.assertEqual(DayCategory.THURSDAY, day.category)
-
-        for i in range(3, 6):
-            day = Day(i, 1, 2025)
-            self.assertEqual(DayCategory.WEEKEND, day.category)
-
-        for i in range(13, 16):
-            day = Day(i, 1, 2025)
-            self.assertEqual(DayCategory.WEEKDAY, day.category)
-
     def test_strain_points(self):
         expected_results = {
             1: StrainPoints.HOLIDAY,

@@ -8,7 +8,7 @@ from itertools import chain
 from typing import Any, Iterator, Self
 
 from algorithm.doctor import Doctor
-from algorithm.enums import DayCategory, StrainPoints, Weekday
+from algorithm.enums import StrainPoints, Weekday
 from algorithm.utils import get_holidays, get_number_of_days_in_month, get_week_number_in_month
 
 HOLIDAYS = get_holidays()
@@ -24,7 +24,6 @@ class Day:
         self.weekday = dt.weekday()
         self.week = get_week_number_in_month(dt)
 
-        self.category = self._get_category()
         self.strain_points = self._get_strain_points()
 
     @cached_property
@@ -33,18 +32,6 @@ class Day:
 
     def _to_date(self) -> date:
         return date(self.year, self.month, self.number)
-
-    def _get_category(self) -> str:
-        if self.weekday == Weekday.THURSDAY:
-            return DayCategory.THURSDAY
-
-        if self.weekday in Weekday.weekend():
-            return DayCategory.WEEKEND
-
-        if self._is_holiday:
-            return DayCategory.HOLIDAY
-
-        return DayCategory.WEEKDAY
 
     def _get_strain_points(self) -> int:
         if self._is_holiday:
