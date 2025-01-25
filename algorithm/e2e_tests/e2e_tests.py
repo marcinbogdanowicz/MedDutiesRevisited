@@ -1,5 +1,6 @@
 from collections import defaultdict
 from copy import deepcopy
+from datetime import date
 from statistics import mean
 from typing import Any
 from unittest import TestCase
@@ -17,74 +18,201 @@ class E2ETests(TestCase):
 
         return input_data
 
+    def get_doctors_on_duty(self, day_number, duties_dict) -> list[int]:
+        return [duty["doctor_pk"] for duty in duties_dict[day_number].values() if duty["doctor_pk"] is not None]
+
+    def get_duties_for_doctor(self, doctor_pk, duties_dict) -> list[dict[str, Any]]:
+        return [duty for day in duties_dict.values() for duty in day.values() if duty["doctor_pk"] == doctor_pk]
+
     def test_success(self):
-        input_data = input_factory(doctors_per_duty=1)
+        input_data = input_factory(doctors_per_duty=3)
 
-        first_result = main(input_data)
-        second_result = main(input_data)
+        result = main(input_data)
 
-        for result in (first_result, second_result):
-            self.assertIsInstance(result, dict)
+        self.assertTrue(result.get("were_any_duties_set"))
+        self.assertTrue(result.get("were_all_duties_set"))
+        self.assertListEqual([], result["errors"])
 
-            """
-            Expected output format:
+        duties = result["duties"]
 
-            {
-                "were_any_duties_set": True,
-                "were_all_duties_set": True,
-                "errors": [],
-                "duties": [
-                    {
-                        "day": 1,
-                        "position": 0,
-                        "doctor_pk": 2,
-                        "strain": 60,
-                        "set_manually": False
-                    },
-                    ...
-                ]
-            }
-            """
+        day_numbers_in_1_2025 = set(range(1, 32))
+        day_numbers_of_duties = set(duties)
+        self.assertSetEqual(day_numbers_in_1_2025, day_numbers_of_duties)
 
-            self.assertTrue(result.get("were_any_duties_set"))
-            self.assertTrue(result.get("were_all_duties_set"))
-            self.assertListEqual([], result.get("errors"))
+        doctor_pks = [doctor["pk"] for doctor in input_data["doctors"]]
 
-            duties = result.get("duties")
+        for day_number, day_data in duties.items():
+            positions = set(day_data)
+            self.assertSetEqual({1, 2, 3}, positions)
+            for position, duty in day_data.items():
+                self.assertEqual(day_number, duty["day"])
+                self.assertEqual(position, duty["position"])
+                self.assertIsNone(duty["pk"])
+                self.assertIn(duty["doctor_pk"], doctor_pks)
+                self.assertFalse(duty["set_by_user"])
+                self.assertGreater(duty["strain_points"], 0)
 
-            day_numbers_in_1_2025 = set(range(1, 32))
-            day_numbers_of_duties = {duty.get("day") for duty in duties}
-            self.assertSetEqual(day_numbers_in_1_2025, day_numbers_of_duties)
-
-            each_duty_contains_info_about_position = all(isinstance(duty.get("position"), bool) for duty in duties)
-            self.assertTrue(each_duty_contains_info_about_position)
-
-            each_duty_contains_info_about_strain = all(duty.get("strain", -1) > 0 for duty in duties)
-            self.assertTrue(each_duty_contains_info_about_strain)
-
-            each_duty_contains_info_on_if_it_was_set_manually = all(
-                isinstance(duty.get("set_manually"), bool) for duty in duties
-            )
-            self.assertTrue(each_duty_contains_info_on_if_it_was_set_manually)
-
-            doctors_pks = [doctor["pk"] for doctor in input_data["doctors"]]
-            each_duty_contains_a_valid_doctor_pk = all(duty.get("doctor_pk") in doctors_pks for duty in duties)
-            self.assertTrue(each_duty_contains_a_valid_doctor_pk)
-
-            # Strain and number of duties are +/- even among doctors
-            strain_per_doctor = defaultdict(int)
-            number_of_duties_per_doctor = defaultdict(int)
-            for duty in duties:
-                strain_per_doctor[duty["doctor_pk"]] += duty["strain"]
+        # Strain and number of duties are +/- even among doctors
+        strain_per_doctor = defaultdict(int)
+        number_of_duties_per_doctor = defaultdict(int)
+        for day in duties.values():
+            for duty in day.values():
+                strain_per_doctor[duty["doctor_pk"]] += duty["strain_points"]
                 number_of_duties_per_doctor[duty["doctor_pk"]] += 1
 
-            def assert_difference_from_mean_less_equal(accepted_difference_ratio: float, values: list[int]):
-                mean_strain = mean(values)
-                for strain in values:
-                    strain_to_mean_difference_ratio = abs(mean_strain - strain) / mean
-                    self.assertLessEqual(strain_to_mean_difference_ratio, accepted_difference_ratio)
+        def assert_difference_from_mean_less_equal(accepted_difference_ratio: float, values: list[int]):
+            mean_strain = mean(values)
+            for strain in values:
+                strain_to_mean_difference_ratio = abs(mean_strain - strain) / mean_strain
+                self.assertLessEqual(strain_to_mean_difference_ratio, accepted_difference_ratio)
 
-            assert_difference_from_mean_less_equal(0.5, strain_per_doctor.values())
-            assert_difference_from_mean_less_equal(0.5, number_of_duties_per_doctor.values())
+        assert_difference_from_mean_less_equal(0.2, strain_per_doctor.values())
+        assert_difference_from_mean_less_equal(0.1, number_of_duties_per_doctor.values())
 
-        self.assertFalse(first_result == second_result)
+    def test_preferences_are_respected(self):
+        input_data = input_factory(doctors_per_duty=3)
+
+        doctors = input_data["doctors"]
+
+        doctors[0]["preferences"]["requested_days"] = [1, 6, 19]
+        doctors[0]["preferences"]["exceptions"] = [2, 3, 4, 5]
+        doctors[0]["preferences"]["maximum_accepted_duties"] = 5
+
+        doctors[1]["preferences"]["preferred_positions"] = [3]
+
+        doctors[2]["preferences"]["preferred_weekdays"] = [5, 6]
+
+        result = main(input_data)
+
+        self.assertTrue(result.get("were_any_duties_set"))
+        self.assertTrue(result.get("were_all_duties_set"))
+        self.assertListEqual([], result["errors"])
+
+        duties = result["duties"]
+
+        for day in doctors[0]["preferences"]["requested_days"]:
+            doctors_on_duty = self.get_doctors_on_duty(day, duties)
+            self.assertIn(doctors[0]["pk"], doctors_on_duty)
+
+        for day in doctors[0]["preferences"]["exceptions"]:
+            doctors_on_duty = self.get_doctors_on_duty(day, duties)
+            self.assertNotIn(doctors[0]["pk"], doctors_on_duty)
+
+        doctor_0_duties = self.get_duties_for_doctor(doctors[0]["pk"], duties)
+        self.assertLessEqual(len(doctor_0_duties), doctors[0]["preferences"]["maximum_accepted_duties"])
+
+        doctor_0_duty_days = {duty["day"] for duty in doctor_0_duties}
+        for day in doctors[0]["preferences"]["requested_days"]:
+            self.assertIn(day, doctor_0_duty_days)
+
+        for day in doctors[0]["preferences"]["exceptions"]:
+            self.assertNotIn(day, doctor_0_duty_days)
+
+        doctor_1_duties = self.get_duties_for_doctor(doctors[1]["pk"], duties)
+        self.assertSetEqual({3}, {duty["position"] for duty in doctor_1_duties})
+
+        doctor_2_duties = self.get_duties_for_doctor(doctors[2]["pk"], duties)
+        for duty in doctor_2_duties:
+            duty_weekday = date(input_data["year"], input_data["month"], duty["day"]).weekday()
+            self.assertIn(duty_weekday, input_data["doctors"][2]["preferences"]["preferred_weekdays"])
+
+    def test_not_enough_doctors_error(self):
+        input_data = input_factory(doctors_per_duty=3, doctors_count=5)
+
+        result = main(input_data)
+
+        self.assertFalse(result.get("were_any_duties_set"))
+        self.assertFalse(result.get("were_all_duties_set"))
+        self.assertEqual(1, len(result["errors"]))
+        self.assertIn('not enough doctors to fill all positions', result["errors"][0])
+
+    def test_incoherent_preferences_errors(self):
+        input_data = input_factory()
+
+        doctors = input_data["doctors"]
+
+        doctors[0]["preferences"]["requested_days"] = [1, 2]
+
+        doctors[1]["preferences"]["requested_days"] = [5]
+        doctors[1]["preferences"]["exceptions"] = [5]
+
+        doctors[2]["preferences"]["requested_days"] = [10, 12, 14, 16, 18]
+        doctors[2]["preferences"]["maximum_accepted_duties"] = 4
+
+        result = main(input_data)
+
+        self.assertFalse(result.get("were_any_duties_set"))
+        self.assertFalse(result.get("were_all_duties_set"))
+        self.assertEqual(3, len(result["errors"]))
+
+        self.assertTrue(any('requested double duties on the following days' in error for error in result["errors"]))
+        self.assertTrue(
+            any('requests and excludes duties on the following dates' in error for error in result["errors"])
+        )
+        self.assertTrue(
+            any('requests duties on 5 days, but would accept only 4' in error for error in result["errors"])
+        )
+
+    def test_requested_days_errors(self):
+        input_data = input_factory(doctors_per_duty=3, duties_count=3)
+
+        doctors = input_data["doctors"]
+
+        doctors[0]["preferences"]["requested_days"] = [19]
+        doctors[1]["preferences"]["requested_days"] = [19]
+        doctors[2]["preferences"]["requested_days"] = [19]
+        doctors[3]["preferences"]["requested_days"] = [19]
+
+        doctors[4]["preferences"]["requested_days"] = [4]
+        duties = input_data["duties"]
+        for i, (doctor, duty) in enumerate(zip(doctors[5:], duties), start=1):
+            duty["day"] = 4
+            duty["doctor_pk"] = doctor["pk"]
+            duty["position"] = i
+
+        result = main(input_data)
+
+        self.assertFalse(result.get("were_any_duties_set"))
+        self.assertFalse(result.get("were_all_duties_set"))
+        self.assertEqual(2, len(result["errors"]))
+
+        self.assertIn('requested duties on day 4, but it was already filled by user', result["errors"][0])
+        self.assertIn('Duty on day 19 was requested', result["errors"][1])
+        self.assertIn('not enough positions available', result["errors"][1])
+
+    def test_no_available_doctors_error(self):
+        input_data = input_factory(doctors_per_duty=2, doctors_count=5)
+
+        doctors = input_data["doctors"]
+        doctors[0]["preferences"]["exceptions"] = [11]
+        doctors[1]["preferences"]["exceptions"] = [11]
+        doctors[2]["preferences"]["exceptions"] = [11]
+
+        doctors[0]["preferences"]["preferred_positions"] = [1]
+        doctors[1]["preferences"]["preferred_positions"] = [1]
+        doctors[2]["preferences"]["preferred_positions"] = [1]
+        doctors[3]["preferences"]["preferred_positions"] = [2]
+        doctors[4]["preferences"]["preferred_positions"] = [2]
+
+        result = main(input_data)
+
+        self.assertFalse(result.get("were_any_duties_set"))
+        self.assertFalse(result.get("were_all_duties_set"))
+        self.assertEqual(1, len(result["errors"]))
+        self.assertIn(
+            'On the following positions on the following days, there are no doctors available for duty',
+            result["errors"][0],
+        )
+
+    def test_not_enough_doctors_shared_between_days(self):
+        input_data = input_factory(doctors_per_duty=2, doctors_count=5)
+
+        doctors = input_data["doctors"]
+        doctors[0]["preferences"]["exceptions"] = [16, 17]
+        doctors[1]["preferences"]["exceptions"] = [16, 17]
+        doctors[2]["preferences"]["exceptions"] = [16]
+
+        result = main(input_data)
+
+        self.assertEqual(1, len(result["errors"]))
+        self.assertIn('On days 16 and 17, position 1, 2, there is 1 doctor less than required.', result["errors"][0])

@@ -126,8 +126,8 @@ def get_holidays() -> dict[int, dict[int, list[int]]]:
 
 class DoctorAvailabilityHelper:
     def __init__(self, doctors: list[Doctor], duty_schedule: DutySchedule) -> None:
-        self.doctors = doctors
         self.duty_schedule = duty_schedule
+        self.doctors = [doctor for doctor in doctors if self._doctor_has_less_duties_than_maximum(doctor)]
 
     def get_availability_schedule(self) -> DoctorAvailabilitySchedule:
         from algorithm.schedule import DoctorAvailabilitySchedule
@@ -142,9 +142,10 @@ class DoctorAvailabilityHelper:
             free_positions = self.duty_schedule[day.number].free_positions()
 
             for duty in self.duty_schedule[day.number].set_duties():
-                doctors.remove(duty.doctor)
                 availability_schedule[day.number, duty.position].append(duty.doctor)
                 availability_schedule[day.number, duty.position].is_set = True
+                with suppress(ValueError):
+                    doctors.remove(duty.doctor)
 
             for doctor in doctors:
                 if not self._has_doctor_received_duties_on_adjacent_days(
@@ -163,3 +164,7 @@ class DoctorAvailabilityHelper:
                     return True
 
         return False
+
+    def _doctor_has_less_duties_than_maximum(self, doctor: Doctor) -> bool:
+        doctor_duties_count = len(list(self.duty_schedule.duties_for_doctor(doctor)))
+        return doctor_duties_count < doctor.preferences.maximum_accepted_duties
