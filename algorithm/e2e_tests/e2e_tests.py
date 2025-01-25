@@ -82,6 +82,10 @@ class E2ETests(TestCase):
 
         doctors[2]["preferences"]["preferred_weekdays"] = [5, 6]
 
+        doctors[3]["preferences"]["requested_days"] = [20]
+        doctors[4]["preferences"]["requested_days"] = [20]
+        doctors[5]["preferences"]["requested_days"] = [20]
+
         result = main(input_data)
 
         self.assertTrue(result.get("were_any_duties_set"))
@@ -115,6 +119,9 @@ class E2ETests(TestCase):
         for duty in doctor_2_duties:
             duty_weekday = date(input_data["year"], input_data["month"], duty["day"]).weekday()
             self.assertIn(duty_weekday, input_data["doctors"][2]["preferences"]["preferred_weekdays"])
+
+        doctors_on_duty_on_20 = [duty["doctor_pk"] for duty in duties[20].values()]
+        self.assertCountEqual([doctors[3]["pk"], doctors[4]["pk"], doctors[5]["pk"]], doctors_on_duty_on_20)
 
     def test_not_enough_doctors_error(self):
         input_data = input_factory(doctors_per_duty=3, doctors_count=5)

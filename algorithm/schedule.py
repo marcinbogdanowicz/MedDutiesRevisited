@@ -199,6 +199,10 @@ class DutyRow(ScheduleRow):
     def doctors(self) -> list[Doctor]:
         return [duty.doctor for duty in self if duty.is_set]
 
+    @property
+    def is_filled(self) -> bool:
+        return all(duty.is_set for duty in self)
+
 
 class DutySchedule(Schedule):
     member_class = DutyRow
@@ -233,6 +237,9 @@ class DutySchedule(Schedule):
     @property
     def is_filled(self) -> bool:
         return all(duty.is_set for duty in self.cells())
+
+    def not_filled_rows_count(self) -> int:
+        return sum(1 for row in self if not row.is_filled)
 
     def to_dict(self) -> dict[str, Any]:
         result = defaultdict(dict)

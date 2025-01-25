@@ -250,7 +250,7 @@ class Algorithm:
         return False
 
     def _are_all_duties_set(self, node: Node) -> bool:
-        return node.days_set == len(self.schedule)
+        return node.days_set == self.schedule.not_filled_rows_count()
 
     def _expand(self, node: Node) -> None:
         if nodes := self._get_nodes(node):
