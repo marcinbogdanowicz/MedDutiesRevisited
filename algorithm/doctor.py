@@ -39,21 +39,21 @@ class Doctor:
         if day.number in self.preferences.exceptions:
             return False
 
-        if day.number == 1 and not self._can_take_duty_on_first_day_of_month:
+        if day.number == 1 and not self.can_take_duty_on_first_day_of_month:
             return False
 
-        if day.is_last_day_of_month and not self._can_take_duty_on_last_day_of_month:
+        if day.is_last_day_of_month and not self.can_take_duty_on_last_day_of_month:
             return False
 
         return True
 
     @cached_property
-    def _can_take_duty_on_first_day_of_month(self) -> bool:
+    def can_take_duty_on_first_day_of_month(self) -> bool:
         last_month_last_day = (date(self.preferences.year, self.preferences.month, 1) - timedelta(days=1)).day
         return last_month_last_day not in self.last_month_duties
 
     @cached_property
-    def _can_take_duty_on_last_day_of_month(self) -> bool:
+    def can_take_duty_on_last_day_of_month(self) -> bool:
         return 1 not in self.next_month_duties
 
     def __str__(self) -> str:

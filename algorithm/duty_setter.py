@@ -148,7 +148,7 @@ class RequestedDutiesSetter:
         return result
 
 
-@dataclass
+@dataclass(frozen=True)
 class Node:
     day_number: int | None
     doctors: tuple[Doctor, ...] | None
@@ -207,7 +207,7 @@ class Algorithm:
             if not self.frontier:
                 break
 
-            node = self.frontier.pop()
+            node = self._remove_node_from_frontier()
 
             if self._is_best_node(node):
                 self.best_node = node
@@ -230,6 +230,9 @@ class Algorithm:
     def _initialize_frontier(self) -> None:
         initial_node = Node.get_empty()
         self.frontier.append(initial_node)
+
+    def _remove_node_from_frontier(self) -> Node:
+        return self.frontier.pop()
 
     def _is_best_node(self, node: Node) -> bool:
         if node.is_empty():
@@ -298,7 +301,7 @@ class Algorithm:
         return nodes
 
     def _construct_schedule(self, node: Node) -> DutySchedule:
-        schedule = self.schedule.copy_empty()
+        schedule = self.schedule.copy()
 
         while node.parent:
             for doctor, position in node.get_doctors_with_positions():

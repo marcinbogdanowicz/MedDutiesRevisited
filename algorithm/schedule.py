@@ -208,6 +208,10 @@ class DutyRow(ScheduleRow):
     def set_duties(self) -> Iterator[Duty]:
         return (duty for duty in self if duty.is_set)
 
+    @property
+    def doctors(self) -> list[Doctor]:
+        return [duty.doctor for duty in self if duty.is_set]
+
 
 class DutySchedule(Schedule):
     member_class = DutyRow
@@ -218,8 +222,17 @@ class DutySchedule(Schedule):
     def duties_for_doctor(self, doctor: Doctor) -> Iterator[Duty]:
         return (duty for duty in self.cells() if doctor in duty)
 
-    def copy_empty(self) -> Self:
-        return self.__class__(self.year, self.month, self.positions)
+    def copy(self) -> Self:
+        result = self.__class__(self.year, self.month, self.positions)
+        for cell in self.cells():
+            result[cell.day.number][cell.position].update(
+                doctor=cell.doctor,
+                pk=cell.pk,
+                strain_points=cell.strain_points,
+                set_by_user=cell.set_by_user,
+            )
+
+        return result
 
     def merge(self, other: DutySchedule) -> None:
         for cell in other.cells():

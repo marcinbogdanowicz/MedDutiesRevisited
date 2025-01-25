@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 from faker import Faker
 
 from algorithm.doctor import Doctor
 from algorithm.duty_setter import DutySetter
 from algorithm.schedule import Day
-from algorithm.utils import get_max_number_of_duties_for_month
+from algorithm.utils import comma_join, get_max_number_of_duties_for_month
+
+if TYPE_CHECKING:
+    from algorithm.schedule import Duty, DutySchedule
 
 faker = Faker()
 
@@ -116,3 +122,60 @@ class InitDutySetterTestMixin(PreferencesKwargsTestMixin):
         exec('\n'.join(f'self.doctor_{i} = doctors[{i} - 1]' for i in range(1, self.doctors_count + 1)))
 
         self.doctors = doctors
+
+
+class ScheduleValidator:
+    def __init__(self, doctors: list[Doctor], schedule: DutySchedule):
+        self.doctors = doctors
+        self.schedule = schedule
+
+        self.errors = []
+
+    def assert_no_invalid_duties(self, check_requested_duties: bool = True) -> None:
+        for doctor in self.doctors:
+            duties = list(self.schedule.duties_for_doctor(doctor))
+            self._validate_duties(doctor, duties, check_requested_duties)
+
+        if self.errors:
+            raise AssertionError(f'Invalid duties were found:\n{"\n".join(self.errors)}')
+
+    def _validate_duties(self, doctor: Doctor, duties: list[Duty], check_requested_duties: bool) -> None:
+        if not duties:
+            self.errors.append(f'{doctor} has no duties.')
+
+        if len(duties) > doctor.preferences.maximum_accepted_duties:
+            self.errors.append(f'{doctor} has more duties than they can accept.')
+
+        duty_days = sorted(duty.day.number for duty in duties)
+        for day in duty_days:
+            if day + 1 in duty_days:
+                self.errors.append(f'{doctor} has consecutive duties on days {day}, {day + 1}.')
+
+        if 1 in duty_days and not doctor.can_take_duty_on_first_day_of_month:
+            self.errors.append(f'{doctor} has consecutive duties on first day of month and last day of previous month.')
+
+        last_day_of_month = len(self.schedule)
+        if last_day_of_month in duty_days and not doctor.can_take_duty_on_last_day_of_month:
+            self.errors.append(f'{doctor} has consecutive duties on last day of month and first day of next month.')
+
+        if check_requested_duties and (
+            missing_duties := [day for day in doctor.preferences.requested_days if day not in duty_days]
+        ):
+            self.errors.append(f'{doctor} has missing requested duties on days: {comma_join(missing_duties)}.')
+
+        for duty in duties:
+            self._validate_duty(duty)
+
+    def _validate_duty(self, duty: Duty) -> None:
+        doctor = duty.doctor
+        day = duty.day
+
+        if day.number in doctor.preferences.exceptions:
+            self.errors.append(f'{doctor} got duty on {day}, which they put on exceptions list.')
+
+        if not duty.set_by_user:
+            if day.weekday not in doctor.preferences.preferred_weekdays:
+                self.errors.append(f'{doctor} got duty on {day}, which is not their preferred weekday.')
+
+            if duty.position not in doctor.preferences.preferred_positions:
+                self.errors.append(f'{doctor} got duty on {day}, which is not their preferred position.')
