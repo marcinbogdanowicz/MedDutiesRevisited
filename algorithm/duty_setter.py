@@ -33,7 +33,7 @@ class Result:
 
     def to_dict(self) -> dict[str, Any]:
         result = vars(self).copy()
-        result["duties"] = self.duties.to_dict()
+        result["duties"] = self.duties.to_list()
 
         return result
 

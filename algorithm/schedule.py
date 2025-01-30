@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import defaultdict
 from datetime import date
 from functools import cached_property
 from itertools import chain
@@ -241,12 +240,8 @@ class DutySchedule(Schedule):
     def not_filled_rows_count(self) -> int:
         return sum(1 for row in self if not row.is_filled)
 
-    def to_dict(self) -> dict[str, Any]:
-        result = defaultdict(dict)
-        for duty in self.cells():
-            result[duty.day.number][duty.position] = duty.to_dict()
-
-        return result
+    def to_list(self) -> list[dict[str, Any]]:
+        return [duty.to_dict() for duty in self.cells()]
 
 
 class AvailableDoctorList(Cell, list):

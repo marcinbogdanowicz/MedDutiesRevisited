@@ -18,11 +18,13 @@ class E2ETests(TestCase):
 
         return input_data
 
-    def get_doctors_on_duty(self, day_number, duties_dict) -> list[int]:
-        return [duty["doctor_pk"] for duty in duties_dict[day_number].values() if duty["doctor_pk"] is not None]
+    def get_doctors_on_duty(self, day_number, duties_list) -> list[int]:
+        return [
+            duty["doctor_pk"] for duty in duties_list if duty["doctor_pk"] is not None and duty["day"] == day_number
+        ]
 
-    def get_duties_for_doctor(self, doctor_pk, duties_dict) -> list[dict[str, Any]]:
-        return [duty for day in duties_dict.values() for duty in day.values() if duty["doctor_pk"] == doctor_pk]
+    def get_duties_for_doctor(self, doctor_pk, duties_list) -> list[dict[str, Any]]:
+        return [duty for duty in duties_list if duty["doctor_pk"] == doctor_pk]
 
     def test_success(self):
         input_data = input_factory(doctors_per_duty=3)
@@ -36,29 +38,25 @@ class E2ETests(TestCase):
         duties = result["duties"]
 
         day_numbers_in_1_2025 = set(range(1, 32))
-        day_numbers_of_duties = set(duties)
+        day_numbers_of_duties = {duty["day"] for duty in duties}
         self.assertSetEqual(day_numbers_in_1_2025, day_numbers_of_duties)
 
         doctor_pks = [doctor["pk"] for doctor in input_data["doctors"]]
 
-        for day_number, day_data in duties.items():
-            positions = set(day_data)
-            self.assertSetEqual({1, 2, 3}, positions)
-            for position, duty in day_data.items():
-                self.assertEqual(day_number, duty["day"])
-                self.assertEqual(position, duty["position"])
-                self.assertIsNone(duty["pk"])
-                self.assertIn(duty["doctor_pk"], doctor_pks)
-                self.assertFalse(duty["set_by_user"])
-                self.assertGreater(duty["strain_points"], 0)
+        for duty in duties:
+            self.assertIsInstance(duty["day"], int)
+            self.assertIn(duty["position"], range(1, input_data["doctors_per_duty"] + 1))
+            self.assertIsNone(duty["pk"])
+            self.assertIn(duty["doctor_pk"], doctor_pks)
+            self.assertFalse(duty["set_by_user"])
+            self.assertGreater(duty["strain_points"], 0)
 
         # Strain and number of duties are +/- even among doctors
         strain_per_doctor = defaultdict(int)
         number_of_duties_per_doctor = defaultdict(int)
-        for day in duties.values():
-            for duty in day.values():
-                strain_per_doctor[duty["doctor_pk"]] += duty["strain_points"]
-                number_of_duties_per_doctor[duty["doctor_pk"]] += 1
+        for duty in duties:
+            strain_per_doctor[duty["doctor_pk"]] += duty["strain_points"]
+            number_of_duties_per_doctor[duty["doctor_pk"]] += 1
 
         def assert_difference_from_mean_less_equal(accepted_difference_ratio: float, values: list[int]):
             mean_strain = mean(values)
@@ -120,7 +118,7 @@ class E2ETests(TestCase):
             duty_weekday = date(input_data["year"], input_data["month"], duty["day"]).weekday()
             self.assertIn(duty_weekday, input_data["doctors"][2]["preferences"]["preferred_weekdays"])
 
-        doctors_on_duty_on_20 = [duty["doctor_pk"] for duty in duties[20].values()]
+        doctors_on_duty_on_20 = [duty["doctor_pk"] for duty in duties if duty["day"] == 20]
         self.assertCountEqual([doctors[3]["pk"], doctors[4]["pk"], doctors[5]["pk"]], doctors_on_duty_on_20)
 
     def test_not_enough_doctors_error(self):
