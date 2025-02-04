@@ -1,7 +1,5 @@
 # MedDuties algorithm microservice
 
-[__TOC__]
-
 ## Overview
 This is a revision of a duty-setting algorithm from MedDuties app ([repo](https://github.com/marcinbogdanowicz/MedDuties)). The original algorithm was written in JavaScript in 2022/23. I decided to translate the code to Python and refactor it using best OOP practices.
 
@@ -638,6 +636,7 @@ This is a rough schema of how the duties are set by the algorithm. Duties specif
 graph TD
     START[Create an empty node]
     ADD["Add node(s) to frontier. Add first node to the front and the rest to the back."]
+    POP[Remove the first node from the frontier]
     CHECK_IF_SET[Check if all duties are filled]
     SELECT_DAY[Select day with least doctors available]
     SORT_COMBS[Sort combinations by sum of doctors strain points]
