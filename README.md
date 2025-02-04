@@ -1,5 +1,7 @@
 # MedDuties algorithm microservice
 
+[__TOC__]
+
 ## Overview
 This is a revision of a duty-setting algorithm from MedDuties app ([repo](https://github.com/marcinbogdanowicz/MedDuties)). The original algorithm was written in JavaScript in 2022/23. I decided to translate the code to Python and refactor it using best OOP practices.
 
@@ -628,17 +630,23 @@ The only endpoint is `POST /set_duties`.
 ```
 </details>
 
-## Algorithm overview
+## AI Algorithm overview
+
+This is a rough schema of how the duties are set by the algorithm. Duties specifically requested by doctors are already set on this stage.
 
 ```mermaid
 graph TD
     START[Create an empty node]
-    ADD["Add node(s) to frontier"]
+    ADD["Add node(s) to frontier. Add first node to the front and the rest to the back."]
     CHECK_IF_SET[Check if all duties are filled]
     SELECT_DAY[Select day with least doctors available]
     SORT_COMBS[Sort combinations by sum of doctors strain points]
     CREATE_COMBS[Create possible doctors combinations]
     CREATE_NODES[Create nodes with each combination]
 
-    START --> ADD --> CHECK_IF_SET --> SELECT_DAY --> CREATE_COMBS --> SORT_COMBS --> CREATE_NODES --> ADD
+    START --> ADD --> CHECK_IF_SET 
+    CHECK_IF_SET --"Yes"--> RETURN[Return filled schedule]
+    CHECK_IF_SET --"No"--> SELECT_DAY --> CREATE_COMBS --> SORT_COMBS --> CREATE_NODES --> ADD
 ```
+
+By adding the first node to the front of the frontier and the rest to the back, **streak search** pattern is achieved - this way we check the best node for day 1, than the best for day 2 etc. until we either fill the schedule or find a day with no options. In the latter case we check the second best for day 1, the best for day 2. Consequent days combinations are dependent on previous one, so best for day 2 will be different for different combinations for day 1, etc.
