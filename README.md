@@ -627,3 +627,18 @@ The only endpoint is `POST /set_duties`.
 }
 ```
 </details>
+
+## Algorithm overview
+
+```mermaid
+graph TD
+    START[Create an empty node]
+    ADD["Add node(s) to frontier"]
+    CHECK_IF_SET[Check if all duties are filled]
+    SELECT_DAY[Select day with least doctors available]
+    SORT_COMBS[Sort combinations by sum of doctors strain points]
+    CREATE_COMBS[Create possible doctors combinations]
+    CREATE_NODES[Create nodes with each combination]
+
+    START --> ADD --> CHECK_IF_SET --> SELECT_DAY --> CREATE_COMBS --> SORT_COMBS --> CREATE_NODES --> ADD
+```
