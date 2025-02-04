@@ -1,12 +1,12 @@
 # MedDuties algorithm microservice
 
 ## Overview
-This is a revision of a duty-setting algorithm from MedDuties app [see the repo](https://github.com/marcinbogdanowicz/MedDuties). The original algorithm was written in JavaScript in 2022/23. I decided to translate the code to Python and refactor is using best OOP practices.
+This is a revision of a duty-setting algorithm from MedDuties app ([repo](https://github.com/marcinbogdanowicz/MedDuties)). The original algorithm was written in JavaScript in 2022/23. I decided to translate the code to Python and refactor it using best OOP practices.
 
 This repo contains a microservice called `algorithm`, designed for creating monthly schedules of medical duties
-for 1 - 3 doctors per duty. The service is responsible for doctors' preferences validation and setting duties. It utilizes a custom best-first search algorithm.
+for 1 - 3 doctors per duty. The service is responsible for doctors' preferences validation and setting duties. It utilizes a **custom best-first search AI algorithm**.
 
-Tech stack: Python 3.12, Flask, pydantic, Docker, docker compose
+**Tech stack**: Python 3.12, Flask, pydantic, Docker, docker compose
 
 ## Installation
 
@@ -23,8 +23,6 @@ The only endpoint is `POST /set_duties`.
 
 <details>
 <summary>Example request data</summary>
-
-<div style="max-height: 400px; overflow: auto;">
 
 ```json
 {
@@ -118,14 +116,10 @@ The only endpoint is `POST /set_duties`.
     ]
 }
 ```
-
-</div>
 </details>
 
 <details>
 <summary>Example response data</summary>
-
-<div style="max-height: 400px; overflow: auto;">
 
 ```json
 {
@@ -632,5 +626,4 @@ The only endpoint is `POST /set_duties`.
     "were_any_duties_set": true
 }
 ```
-</div>
 </details>
