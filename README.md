@@ -643,7 +643,7 @@ graph TD
     CREATE_COMBS[Create possible doctors combinations]
     CREATE_NODES[Create nodes with each combination]
 
-    START --> ADD --> CHECK_IF_SET 
+    START --> ADD --> POP --> CHECK_IF_SET 
     CHECK_IF_SET --"Yes"--> RETURN[Return filled schedule]
     CHECK_IF_SET --"No"--> SELECT_DAY --> CREATE_COMBS --> SORT_COMBS --> CREATE_NODES --> ADD
 ```
