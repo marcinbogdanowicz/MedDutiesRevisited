@@ -639,7 +639,7 @@ graph TD
     POP[Remove the first node from the frontier]
     CHECK_IF_SET[Check if all duties are filled]
     SELECT_DAY[Select day with least doctors available]
-    SORT_COMBS[Sort combinations by sum of doctors strain points]
+    SORT_COMBS[Sort combinations by sum of each doctors strain added by this duty]
     CREATE_COMBS[Create possible doctors combinations]
     CREATE_NODES[Create nodes with each combination]
 
