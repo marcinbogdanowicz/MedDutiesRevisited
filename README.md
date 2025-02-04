@@ -654,4 +654,4 @@ graph TD
     CHECK_IF_SET --"No"--> SELECT_DAY --> CREATE_COMBS --> SORT_COMBS --> CREATE_NODES --> ADD
 ```
 
-By adding the first node to the front of the frontier and the rest to the back, **streak search** pattern is achieved - this way we check the best node for day 1, than the best for day 2 etc. until we either fill the schedule or find a day with no options. In the latter case we check the second best for day 1, the best for day 2. Consequent days combinations are dependent on previous one, so best for day 2 will be different for different combinations for day 1, etc.
+By adding the first node to the front of the frontier and the rest to the back, **streak search** pattern is achieved - this way we check the best node for day 1, than the best for day 2 etc. until we either fill the schedule or find a day with no options. In the latter case we check the second best for day 1, the best for day 2, etc. Consequent days combinations are dependent on previous one, so best for day 2 will be different for different combinations for day 1, etc.
