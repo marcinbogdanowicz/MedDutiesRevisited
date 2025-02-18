@@ -1,0 +1,107 @@
+# Polish translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-02-18 22:31+0100\n"
+"PO-Revision-Date: 2025-02-18 22:35+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: pl\n"
+"Language-Team: pl <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: algorithm/validators.py:44
+#, python-brace-format
+msgid "There are not enough doctors to fill all positions. Minimum required: {minimum_doctors_count}, actual: {doctors_count}."
+msgstr "Zbyt mało lekarzy, by obsadzić wszystkie pozycje. Minimum wynosi {minimum_doctors_count}, dodano {doctors_count}."
+
+#: algorithm/validators.py:75
+#, python-brace-format
+msgid "{day} and {next_day}"
+msgstr "{day} oraz {next_day}"
+
+#: algorithm/validators.py:80
+#, python-brace-format
+msgid "{doctor} requested double duties on the following days: {doubles_str}"
+msgstr "{doctor} prosi o 48-godzinne dyżury w następujące dni: {doubles_str}"
+
+#: algorithm/validators.py:97
+#, python-brace-format
+msgid ""
+"{doctor} requests and excludes duties on the following dates: "
+"{conflicts_str}"
+msgstr "{doctor} jednocześnie wyklucza i prosi o dyżur w następujące dni: {conflicts_str}"
+
+#: algorithm/validators.py:110
+#, python-brace-format
+msgid ""
+"{doctor} requests duties on {requested_days_count} days, but would accept"
+" only {maximum_accepted_duties} duties."
+msgstr "{doctor} wskazał {requested_days_count} dni dyżurowe, lecz dopuszcza mniejszą liczbę dyżurów: {maximum_accepted_duties.}"
+
+#: algorithm/validators.py:144
+#, python-brace-format
+msgid ""
+"{doctors_who_requested_this_day} requested duties on day {day_number}, "
+"but it was already filled by user."
+msgstr "{doctors_who_requested_this_day} proszą o dyżur dnia: {day_number}, który został już obsadzony przez użytkownika."
+
+#: algorithm/validators.py:159
+#, python-brace-format
+msgid ""
+"Duty on day {day_number} was requested by {doctors_who_requested_duty}, "
+"but there are not enough positions available (due to requesting doctors "
+"count, positions conflicts or already set duties)."
+msgstr "Lekarze {doctors_who_requested_duty} proszą o dyżur dnia: {day_number}, lecz nie można ich obsadzić (ze względu na ich liczbę, żądane pozycje lub już obsadzone dyżury)."
+
+#: algorithm/validators.py:233
+#, python-brace-format
+msgid ""
+"On the following positions on the following days, there are no doctors "
+"available for duty: {days_with_positions_str}."
+msgstr "Brak lekarzy, którzy mogą wziąć dyżur w następujące dni na podanych pozycjach: {days_with_positions_str}."
+
+#: algorithm/validators.py:244
+#, python-brace-format
+msgid " - only: {available_doctors_str}"
+msgstr " - jedynie: {available_doctors_str}"
+
+#: algorithm/validators.py:250
+#, python-brace-format
+msgid ""
+"On {date} not enough doctors are available for "
+"duty{available_doctors_str}."
+msgstr "Zbyt mało lekarzy do obsadzenia dyżuru dnia: {date}{available_doctors_str}"
+
+#: algorithm/validators.py:294
+#, python-brace-format
+msgid "are {missing_count} doctors"
+msgstr "{missing_count} lekarzy"
+
+#: algorithm/validators.py:296
+#, python-brace-format
+msgid "is {missing_count} doctor"
+msgstr "{missing_count} lekarza"
+
+#: algorithm/validators.py:301
+#, python-brace-format
+msgid "{doctor} (pos. {preferred_positions_str})"
+msgstr "{doctor} (poz. {preferred_positions_str})"
+
+#: algorithm/validators.py:311
+#, python-brace-format
+msgid ""
+"On days {day_number} and {next_day_number}, position "
+"{positions_combination_str}, there {missing_doctors_pluralized} less than"
+" required. (Available: {available_doctors_str})."
+msgstr "W dni: {day_number} i {next_day_number} na pozycji {positions_combination_str} brakuje {missing_doctors_pluralized}. (Dostępni: {available_doctors_str})"
+
