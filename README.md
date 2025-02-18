@@ -628,6 +628,32 @@ The only endpoint is `POST /set_duties`.
 ```
 </details>
 
+## Duty-setting principles
+
+The algorithm will set duties based on the following monthly preferences of each doctor:
+- dates, where they would like to be on duty,
+- dates, where they cannot be on duty ('exceptions'),
+- weekdays, where they generally cannot be on duty,
+- duty positions they can be put on (numbered 1 to 3 - units need to map this to their specific positions),
+- total number of duties they can accept in a month.
+
+The duty-setting process is based on the following principles:
+- no double duties (at least one day break between duties is required)
+- doctors are expected to be given a day off after duty,
+- each day is assigned a base strain value - here are day types ordered from highest strain:
+    - holiday,
+    - Saturday (since it leaves only Sunday to recover),
+    - Sunday,
+    - Friday (duty ends on Saturday morning, requiring to spend some part of the weekend on recovery),
+    - Monday, Tuesday, Wednesday,
+    - Thursday (since next day is off, duty on Thursday results in a longer weekend)
+- the closer the duties are, the higher the strain (makes a difference up to 4 days apart),
+- duty on each new weekend (Friday-Sunday) adds additional strain,
+- doctor on duty on Friday should be on duty on Sunday if possible (to avoid interrupting other weekends),
+- doctors having duty on Thursday should not be put on duty on Saturday if possible (as it cancels the longer weekend benefit).
+
+The algorithm implements randomness to ensure that running it with the same input doesn't provide identical results. This allows to choose between a number of versions to account for subtle preferences or soft requirements, which cannot or should not be translated to code (e.g. for some reason doctor A might prefer Tuesdays over Wednesdays, but not to the extent of excluding Wednesdays - or when someone needs to have duties on 3 weekends in month, it 'would be good' if it wasn't doctor B, etc.).
+
 ## AI Algorithm overview
 
 This is a rough schema of how the duties are set by the algorithm. Duties specifically requested by doctors are already set on this stage.
