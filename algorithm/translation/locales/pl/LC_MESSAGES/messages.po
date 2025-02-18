@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-02-18 22:31+0100\n"
+"POT-Creation-Date: 2025-02-18 23:31+0100\n"
 "PO-Revision-Date: 2025-02-18 22:35+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pl\n"
@@ -19,10 +19,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
+#: algorithm/doctor.py:61
+#, python-brace-format
+msgid "Doctor {name}"
+msgstr "dr {name}"
+
 #: algorithm/validators.py:44
 #, python-brace-format
-msgid "There are not enough doctors to fill all positions. Minimum required: {minimum_doctors_count}, actual: {doctors_count}."
-msgstr "Zbyt mało lekarzy, by obsadzić wszystkie pozycje. Minimum wynosi {minimum_doctors_count}, dodano {doctors_count}."
+msgid ""
+"There are not enough doctors to fill all positions. Minimum required: "
+"{minimum_doctors_count}, actual: {doctors_count}."
+msgstr ""
+"Zbyt mało lekarzy, by obsadzić wszystkie pozycje. Minimum wynosi "
+"{minimum_doctors_count}, dodano {doctors_count}."
 
 #: algorithm/validators.py:75
 #, python-brace-format
@@ -39,21 +48,27 @@ msgstr "{doctor} prosi o 48-godzinne dyżury w następujące dni: {doubles_str}"
 msgid ""
 "{doctor} requests and excludes duties on the following dates: "
 "{conflicts_str}"
-msgstr "{doctor} jednocześnie wyklucza i prosi o dyżur w następujące dni: {conflicts_str}"
+msgstr ""
+"{doctor} jednocześnie wyklucza i prosi o dyżur w następujące dni: "
+"{conflicts_str}"
 
 #: algorithm/validators.py:110
 #, python-brace-format
 msgid ""
 "{doctor} requests duties on {requested_days_count} days, but would accept"
 " only {maximum_accepted_duties} duties."
-msgstr "{doctor} wskazał {requested_days_count} dni dyżurowe, lecz dopuszcza mniejszą liczbę dyżurów: {maximum_accepted_duties.}"
+msgstr ""
+"{doctor} wskazał {requested_days_count} dni dyżurowe, lecz dopuszcza "
+"mniejszą liczbę dyżurów: {maximum_accepted_duties.}"
 
 #: algorithm/validators.py:144
 #, python-brace-format
 msgid ""
 "{doctors_who_requested_this_day} requested duties on day {day_number}, "
 "but it was already filled by user."
-msgstr "{doctors_who_requested_this_day} proszą o dyżur dnia: {day_number}, który został już obsadzony przez użytkownika."
+msgstr ""
+"{doctors_who_requested_this_day} proszą o dyżur dnia: {day_number}, który"
+" został już obsadzony przez użytkownika."
 
 #: algorithm/validators.py:159
 #, python-brace-format
@@ -61,14 +76,19 @@ msgid ""
 "Duty on day {day_number} was requested by {doctors_who_requested_duty}, "
 "but there are not enough positions available (due to requesting doctors "
 "count, positions conflicts or already set duties)."
-msgstr "Lekarze {doctors_who_requested_duty} proszą o dyżur dnia: {day_number}, lecz nie można ich obsadzić (ze względu na ich liczbę, żądane pozycje lub już obsadzone dyżury)."
+msgstr ""
+"Lekarze {doctors_who_requested_duty} proszą o dyżur dnia: {day_number}, "
+"lecz nie można ich obsadzić (ze względu na ich liczbę, żądane pozycje lub"
+" już obsadzone dyżury)."
 
 #: algorithm/validators.py:233
 #, python-brace-format
 msgid ""
 "On the following positions on the following days, there are no doctors "
 "available for duty: {days_with_positions_str}."
-msgstr "Brak lekarzy, którzy mogą wziąć dyżur w następujące dni na podanych pozycjach: {days_with_positions_str}."
+msgstr ""
+"Brak lekarzy, którzy mogą wziąć dyżur w następujące dni na podanych "
+"pozycjach: {days_with_positions_str}."
 
 #: algorithm/validators.py:244
 #, python-brace-format
@@ -103,5 +123,8 @@ msgid ""
 "On days {day_number} and {next_day_number}, position "
 "{positions_combination_str}, there {missing_doctors_pluralized} less than"
 " required. (Available: {available_doctors_str})."
-msgstr "W dni: {day_number} i {next_day_number} na pozycji {positions_combination_str} brakuje {missing_doctors_pluralized}. (Dostępni: {available_doctors_str})"
+msgstr ""
+"W dni: {day_number} i {next_day_number} na pozycji "
+"{positions_combination_str} brakuje {missing_doctors_pluralized}. "
+"(Dostępni: {available_doctors_str})"
 

@@ -58,7 +58,7 @@ class Doctor:
         return 1 not in self.next_month_duties
 
     def __str__(self) -> str:
-        return _(f'Doctor {self.name}')
+        return _('Doctor {name}', name=self.name)
 
     def __repr__(self) -> str:
         return f'{self} (pk={self.pk})'

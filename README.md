@@ -6,7 +6,9 @@ This is a revision of a duty-setting algorithm from MedDuties app ([repo](https:
 This repo contains a microservice called `algorithm`, designed for creating monthly schedules of medical duties
 for 1 - 3 doctors per duty. The service is responsible for doctors' preferences validation and setting duties. It utilizes a **custom best-first search AI algorithm**.
 
-**Tech stack**: Python 3.12, Flask, pydantic, Docker, docker compose
+Service implements localization and is able to return user facing messages (preferences validation outcome) in Polish or English.
+
+**Tech stack**: Python 3.12, Flask, gunicorn, pydantic, Babel, Docker, docker compose
 
 ## Installation
 
@@ -113,7 +115,8 @@ The only endpoint is `POST /set_duties`.
             "strain_points": 15,
             "set_by_user": true
         }
-    ]
+    ],
+    "locale": "pl" // optional; available options: pl, en
 }
 ```
 </details>
