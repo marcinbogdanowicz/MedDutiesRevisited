@@ -1,7 +1,7 @@
 from flask import Flask, request
 from pydantic import ValidationError
 
-from algorithm.main import set_duties
+from algorithm.main import set_duties, validate_duties_can_be_set
 from algorithm.translation import init_locale
 
 app = Flask(__name__)
@@ -33,3 +33,9 @@ def handle_server_error(e):
 def handle_set_duties():
     data = request.get_json(silent=True)
     return set_duties(data)
+
+
+@app.post("/validate_duties")
+def handle_validating_duties():
+    data = request.get_json(silent=True)
+    return validate_duties_can_be_set(data)
