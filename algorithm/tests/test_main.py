@@ -2,7 +2,7 @@ from contextlib import suppress
 from unittest import TestCase
 from unittest.mock import patch
 
-from algorithm.main import create_duty_setter, main, validate_data
+from algorithm.main import create_duty_setter, set_duties, validate_data
 from algorithm.tests.utils import input_factory
 from algorithm.utils import get_number_of_days_in_month
 
@@ -11,7 +11,7 @@ class MainFunctionTests(TestCase):
     @patch('algorithm.main.InputSerializer.model_validate', side_effect=Exception)
     def test_data_is_validated(self, mock_model_validate):
         with suppress(Exception):
-            main({'test': 'data'})
+            set_duties({'test': 'data'})
 
         mock_model_validate.assert_called_once()
 

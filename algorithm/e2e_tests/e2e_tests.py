@@ -5,7 +5,7 @@ from statistics import mean
 from typing import Any
 from unittest import TestCase
 
-from algorithm.main import main
+from algorithm.main import set_duties
 from algorithm.tests.utils import input_factory
 
 
@@ -29,7 +29,7 @@ class E2ETests(TestCase):
     def test_success(self):
         input_data = input_factory(doctors_per_duty=3)
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertTrue(result.get("were_any_duties_set"))
         self.assertTrue(result.get("were_all_duties_set"))
@@ -84,7 +84,7 @@ class E2ETests(TestCase):
         doctors[4]["preferences"]["requested_days"] = [20]
         doctors[5]["preferences"]["requested_days"] = [20]
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertTrue(result.get("were_any_duties_set"))
         self.assertTrue(result.get("were_all_duties_set"))
@@ -124,7 +124,7 @@ class E2ETests(TestCase):
     def test_not_enough_doctors_error(self):
         input_data = input_factory(doctors_per_duty=3, doctors_count=5)
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertFalse(result.get("were_any_duties_set"))
         self.assertFalse(result.get("were_all_duties_set"))
@@ -144,7 +144,7 @@ class E2ETests(TestCase):
         doctors[2]["preferences"]["requested_days"] = [10, 12, 14, 16, 18]
         doctors[2]["preferences"]["maximum_accepted_duties"] = 4
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertFalse(result.get("were_any_duties_set"))
         self.assertFalse(result.get("were_all_duties_set"))
@@ -175,7 +175,7 @@ class E2ETests(TestCase):
             duty["doctor_pk"] = doctor["pk"]
             duty["position"] = i
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertFalse(result.get("were_any_duties_set"))
         self.assertFalse(result.get("were_all_duties_set"))
@@ -199,7 +199,7 @@ class E2ETests(TestCase):
         doctors[3]["preferences"]["preferred_positions"] = [2]
         doctors[4]["preferences"]["preferred_positions"] = [2]
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertFalse(result.get("were_any_duties_set"))
         self.assertFalse(result.get("were_all_duties_set"))
@@ -217,7 +217,7 @@ class E2ETests(TestCase):
         doctors[1]["preferences"]["exceptions"] = [16, 17]
         doctors[2]["preferences"]["exceptions"] = [16]
 
-        result = main(input_data)
+        result = set_duties(input_data)
 
         self.assertEqual(1, len(result["errors"]))
         self.assertIn('On days 16 and 17, position 1, 2, there is 1 doctor less than required.', result["errors"][0])
