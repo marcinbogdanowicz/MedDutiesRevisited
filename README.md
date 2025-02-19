@@ -21,7 +21,9 @@ The server will listen at `http://localhost:5000/`
 
 ## Usage
 
-The only endpoint is `POST /set_duties`.
+### `POST /set_duties`
+
+Validate if duties can be set and attempt filling the schedule if no errors were found.
 
 <details>
 <summary>Example request data</summary>
@@ -116,7 +118,7 @@ The only endpoint is `POST /set_duties`.
             "set_by_user": true
         }
     ],
-    "locale": "pl" // optional; available options: pl, en
+    "locale": "en" // optional; available options: pl, en
 }
 ```
 </details>
@@ -627,6 +629,123 @@ The only endpoint is `POST /set_duties`.
     "errors": [],
     "were_all_duties_set": true,
     "were_any_duties_set": true
+}
+```
+</details>
+
+### `POST /validate_duties_can_be_set`
+
+Runs the same validators as before setting duties, but without attempting to set duties if there are no errors.
+
+Empty `"errors"` list indicates that no errors were found.
+
+<details>
+<summary>Example request data</summary>
+
+```json
+{
+    "year": 2025,
+    "month": 1,
+    "doctors_per_duty": 2,
+    "doctors": [
+        {
+            "pk": 1,
+            "name": "Elizabeth Davis",
+            "preferences": {
+                "exceptions": [11, 12, 13],
+                "requested_days": [10, 14],
+                "preferred_weekdays": [0, 1, 3, 4, 5, 6],
+                "preferred_positions": [1, 2],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [19, 24],
+            "next_month_duties": [1, 17]
+        },
+        {
+            "pk": 2,
+            "name": "Dustin Bray",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 3,
+            "name": "Matthew Garrett",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 4,
+            "name": "Tammy Ward",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 5,
+            "name": "Connor Murphy",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        }
+    ],
+    "duties": [
+        {
+            "pk": 1,
+            "doctor_pk": 5,
+            "day": 1,
+            "position": 2,
+            "strain_points": 20,
+            "set_by_user": true
+        },
+        {
+            "pk": 2,
+            "doctor_pk": 1,
+            "day": 3,
+            "position": 1,
+            "strain_points": 15,
+            "set_by_user": true
+        }
+    ],
+    "locale": "en" // optional; available options: pl, en
+}
+```
+</details>
+
+<details>
+<summary>Example response data</summary>
+
+```json
+{
+    "errors": [
+        "There are not enough doctors to fill all positions. Minimum required: 6, actual: 5.",
+        "Doctor Connor Murphy requested double duties on the following days: 11 and 12, 12 and 13"
+    ]
 }
 ```
 </details>
