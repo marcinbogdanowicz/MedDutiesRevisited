@@ -2,8 +2,7 @@ from flask import Flask, request
 from pydantic import ValidationError
 
 from algorithm.main import main
-from algorithm.translation import current_translations, get_translations
-from web.serializers import LocaleSerializer
+from algorithm.translation import init_locale
 
 app = Flask(__name__)
 
@@ -11,9 +10,7 @@ app = Flask(__name__)
 @app.before_request
 def configure_locale():
     data = request.get_json(silent=True) or {}
-    serializer = LocaleSerializer.model_validate(data)
-    translations = get_translations(serializer.locale)
-    current_translations.set(translations)
+    init_locale(data)
 
 
 @app.errorhandler(ValidationError)
