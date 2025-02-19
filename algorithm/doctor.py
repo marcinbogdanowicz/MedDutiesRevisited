@@ -5,6 +5,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Sequence
 
 from algorithm.enums import Weekday
+from algorithm.translation import _
 
 if TYPE_CHECKING:
     from algorithm.schedule import Day
@@ -57,7 +58,7 @@ class Doctor:
         return 1 not in self.next_month_duties
 
     def __str__(self) -> str:
-        return f'Doctor {self.name}'
+        return _('Doctor {name}', name=self.name)
 
     def __repr__(self) -> str:
         return f'{self} (pk={self.pk})'

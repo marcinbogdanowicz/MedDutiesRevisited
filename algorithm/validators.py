@@ -7,6 +7,7 @@ from itertools import combinations
 from typing import TYPE_CHECKING
 
 from algorithm.exceptions import CantSetDutiesError
+from algorithm.translation import _
 from algorithm.utils import DoctorAvailabilityHelper, comma_join, is_superset_included
 
 if TYPE_CHECKING:
@@ -39,8 +40,12 @@ class DoctorCountValidator(BaseDutySettingValidator):
 
         if doctors_count < minimum_doctors_count:
             self.errors.append(
-                f'There are not enough doctors to fill all positions. Minimum required: {minimum_doctors_count}, '
-                f'actual: {doctors_count}.'
+                _(
+                    'There are not enough doctors to fill all positions. Minimum required: {minimum_doctors_count}, '
+                    'actual: {doctors_count}.',
+                    minimum_doctors_count=minimum_doctors_count,
+                    doctors_count=doctors_count,
+                )
             )
 
 
@@ -67,11 +72,15 @@ class PreferencesCoherenceValidator(BaseDutySettingValidator):
         requested_doubles = []
         for day in requested_days:
             if day + 1 in requested_days:
-                requested_doubles.append(f'{day} and {day + 1}')
+                requested_doubles.append(_('{day} and {next_day}', day=day, next_day=day + 1))
 
         if requested_doubles:
             self.errors.append(
-                f'{doctor} requested double duties on the following days: {comma_join(requested_doubles)}'
+                _(
+                    '{doctor} requested double duties on the following days: {doubles_str}',
+                    doctor=doctor,
+                    doubles_str=comma_join(requested_doubles),
+                )
             )
 
     def _validate_no_coincidence_with_exceptions(self, doctor: Doctor) -> None:
@@ -83,7 +92,13 @@ class PreferencesCoherenceValidator(BaseDutySettingValidator):
                 conflicts.append(day)
 
         if conflicts:
-            self.errors.append(f'{doctor} requests and excludes duties on the following dates: {comma_join(conflicts)}')
+            self.errors.append(
+                _(
+                    '{doctor} requests and excludes duties on the following dates: {conflicts_str}',
+                    doctor=doctor,
+                    conflicts_str=comma_join(conflicts),
+                )
+            )
 
     def _validate_enough_duties_are_accepted(self, doctor: Doctor) -> None:
         preferences = doctor.preferences
@@ -91,8 +106,13 @@ class PreferencesCoherenceValidator(BaseDutySettingValidator):
         requested_days_count = len(preferences.requested_days)
         if requested_days_count > preferences.maximum_accepted_duties:
             self.errors.append(
-                f'{doctor} requests duties on {requested_days_count} days, but would accept only '
-                f'{preferences.maximum_accepted_duties} duties.'
+                _(
+                    '{doctor} requests duties on {requested_days_count} days, but would accept only '
+                    '{maximum_accepted_duties} duties.',
+                    doctor=doctor,
+                    requested_days_count=requested_days_count,
+                    maximum_accepted_duties=preferences.maximum_accepted_duties,
+                )
             )
 
 
@@ -120,8 +140,12 @@ class RequestedDaysConflictsValidator(BaseDutySettingValidator):
         for day_number in requested_days_which_were_already_filled_by_user:
             doctors_who_requested_this_day = self._doctors_who_requested_each_day[day_number]
             self.errors.append(
-                f'{comma_join(doctors_who_requested_this_day)} requested duties on day {day_number}, '
-                'but it was already filled by user.'
+                _(
+                    '{doctors_who_requested_this_day} requested duties on day {day_number}, '
+                    'but it was already filled by user.',
+                    doctors_who_requested_this_day=comma_join(doctors_who_requested_this_day),
+                    day_number=day_number,
+                )
             )
 
     def _validate_requested_days_can_be_granted(self) -> None:
@@ -131,9 +155,13 @@ class RequestedDaysConflictsValidator(BaseDutySettingValidator):
             if not self._can_duties_on_requested_day_be_granted(day_number):
                 doctors_who_requested_duties = self._doctors_who_requested_each_day[day_number]
                 self.errors.append(
-                    f'Duty on day {day_number} was requested by {comma_join(doctors_who_requested_duties)}, '
-                    'but there are not enough positions available (due to requesting doctors count, positions conflicts '
-                    'or already set duties).'
+                    _(
+                        'Duty on day {day_number} was requested by {doctors_who_requested_duty}, '
+                        'but there are not enough positions available (due to requesting doctors count, positions conflicts '
+                        'or already set duties).',
+                        day_number=day_number,
+                        doctors_who_requested_duty=comma_join(doctors_who_requested_duties),
+                    )
                 )
 
     def _can_duties_on_requested_day_be_granted(self, day_number: int) -> bool:
@@ -201,16 +229,29 @@ class DailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
         if days_with_missing_doctors:
             days_with_positions_str = '; '.join(days_with_missing_doctors)
             self.errors.append(
-                'On the following positions on the following days, there are no doctors available for duty: '
-                f'{days_with_positions_str}.'
+                _(
+                    'On the following positions on the following days, there are no doctors available for duty: '
+                    '{days_with_positions_str}.',
+                    days_with_positions_str=days_with_positions_str,
+                )
             )
 
     def _validate_each_day(self) -> None:
         for row in self.availability_schedule:
             available_doctors = row.doctors_for_all_positions()
             if len(available_doctors) < self.availability_schedule.positions:
-                available_doctors_str = f' - only: {comma_join(available_doctors)}' if available_doctors else ''
-                self.errors.append(f'On {row.day} not enough doctors are available for duty{available_doctors_str}.')
+                available_doctors_str = (
+                    _(' - only: {available_doctors_str}', available_doctors_str=comma_join(available_doctors))
+                    if available_doctors
+                    else ''
+                )
+                self.errors.append(
+                    _(
+                        'On {date} not enough doctors are available for duty{available_doctors_str}.',
+                        date=row.day,
+                        available_doctors_str=available_doctors_str,
+                    )
+                )
 
 
 class BidailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
@@ -250,19 +291,31 @@ class BidailyDoctorAvailabilityValidator(BaseDoctorAvailabilityValidator):
         available_doctors: set[Doctor],
     ) -> str:
         missing_doctors_pluralized = (
-            f'are {missing_count} doctors' if missing_count > 1 else f'is {missing_count} doctor'
+            _('are {missing_count} doctors', missing_count=missing_count)
+            if missing_count > 1
+            else _('is {missing_count} doctor', missing_count=missing_count)
         )
         available_doctors_str = (
             comma_join(
-                f'{doctor} (pos. {comma_join(doctor.preferences.preferred_positions)})' for doctor in available_doctors
+                _(
+                    '{doctor} (pos. {preferred_positions_str})',
+                    doctor=doctor,
+                    preferred_positions_str=comma_join(doctor.preferences.preferred_positions),
+                )
+                for doctor in available_doctors
             )
             if available_doctors
             else '-'
         )
-        return (
-            f'On days {day_number} and {day_number + 1}, position {comma_join(positions_combination)}, '
-            f'there {missing_doctors_pluralized} less than required. '
-            f'(Available: {available_doctors_str}).'
+        return _(
+            'On days {day_number} and {next_day_number}, position {positions_combination_str}, '
+            'there {missing_doctors_pluralized} less than required. '
+            '(Available: {available_doctors_str}).',
+            day_number=day_number,
+            next_day_number=day_number + 1,
+            positions_combination_str=comma_join(positions_combination),
+            missing_doctors_pluralized=missing_doctors_pluralized,
+            available_doctors_str=available_doctors_str,
         )
 
     def _get_position_combinations(self) -> list[tuple[int, ...]]:

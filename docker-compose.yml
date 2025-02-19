@@ -2,10 +2,10 @@ services:
   algorithm:
     build: .
     ports:
-      - 5000:5000
+      - 5000:8000
     volumes:
       - ./algorithm:/app/algorithm
       - ./web:/app/web
     environment:
       - PYTHONPATH=.
-    command: flask --app web.app run --host=0.0.0.0
+    command: gunicorn -b 0.0.0.0 --reload 'web.app:app'
