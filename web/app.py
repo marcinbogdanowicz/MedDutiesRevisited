@@ -35,7 +35,7 @@ def handle_set_duties():
     return set_duties(data)
 
 
-@app.post("/validate_duties")
+@app.post("/validate_duties_can_be_set")
 def handle_validating_duties():
     data = request.get_json(silent=True)
     return validate_duties_can_be_set(data)
