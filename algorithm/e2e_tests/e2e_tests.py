@@ -5,11 +5,127 @@ from statistics import mean
 from typing import Any
 from unittest import TestCase
 
-from algorithm.main import set_duties
+from algorithm.main import set_duties, validate_duties_can_be_set
 from algorithm.tests.utils import input_factory
 
 
-class E2ETests(TestCase):
+class DutySettingValidationE2ETestMixin:
+    @property
+    def tested_function(self):
+        raise NotImplementedError
+
+    def setUp(self):
+        self.result = None  # Placeholder for test function result - allows further assertions
+
+    def test_not_enough_doctors_error(self):
+        input_data = input_factory(doctors_per_duty=3, doctors_count=5)
+
+        result = self.tested_function(input_data)
+
+        self.assertEqual(1, len(result["errors"]))
+        self.assertIn('not enough doctors to fill all positions', result["errors"][0])
+
+        self.result = result
+
+    def test_incoherent_preferences_errors(self):
+        input_data = input_factory()
+
+        doctors = input_data["doctors"]
+
+        doctors[0]["preferences"]["requested_days"] = [1, 2]
+
+        doctors[1]["preferences"]["requested_days"] = [5]
+        doctors[1]["preferences"]["exceptions"] = [5]
+
+        doctors[2]["preferences"]["requested_days"] = [10, 12, 14, 16, 18]
+        doctors[2]["preferences"]["maximum_accepted_duties"] = 4
+
+        result = self.tested_function(input_data)
+
+        self.assertEqual(3, len(result["errors"]))
+
+        self.assertTrue(any('requested double duties on the following days' in error for error in result["errors"]))
+        self.assertTrue(
+            any('requests and excludes duties on the following dates' in error for error in result["errors"])
+        )
+        self.assertTrue(
+            any('requests duties on 5 days, but would accept only 4' in error for error in result["errors"])
+        )
+
+        self.result = result
+
+    def test_requested_days_errors(self):
+        input_data = input_factory(doctors_per_duty=3, duties_count=3)
+
+        doctors = input_data["doctors"]
+
+        doctors[0]["preferences"]["requested_days"] = [19]
+        doctors[1]["preferences"]["requested_days"] = [19]
+        doctors[2]["preferences"]["requested_days"] = [19]
+        doctors[3]["preferences"]["requested_days"] = [19]
+
+        doctors[4]["preferences"]["requested_days"] = [4]
+        duties = input_data["duties"]
+        for i, (doctor, duty) in enumerate(zip(doctors[5:], duties), start=1):
+            duty["day"] = 4
+            duty["doctor_pk"] = doctor["pk"]
+            duty["position"] = i
+
+        result = self.tested_function(input_data)
+
+        self.assertEqual(2, len(result["errors"]))
+
+        self.assertIn('requested duties on day 4, but it was already filled by user', result["errors"][0])
+        self.assertIn('Duty on day 19 was requested', result["errors"][1])
+        self.assertIn('not enough positions available', result["errors"][1])
+
+        self.result = result
+
+    def test_no_available_doctors_error(self):
+        input_data = input_factory(doctors_per_duty=2, doctors_count=5)
+
+        doctors = input_data["doctors"]
+        doctors[0]["preferences"]["exceptions"] = [11]
+        doctors[1]["preferences"]["exceptions"] = [11]
+        doctors[2]["preferences"]["exceptions"] = [11]
+
+        doctors[0]["preferences"]["preferred_positions"] = [1]
+        doctors[1]["preferences"]["preferred_positions"] = [1]
+        doctors[2]["preferences"]["preferred_positions"] = [1]
+        doctors[3]["preferences"]["preferred_positions"] = [2]
+        doctors[4]["preferences"]["preferred_positions"] = [2]
+
+        result = self.tested_function(input_data)
+
+        self.assertEqual(1, len(result["errors"]))
+        self.assertIn(
+            'On the following positions on the following days, there are no doctors available for duty',
+            result["errors"][0],
+        )
+
+        self.result = result
+
+    def test_not_enough_doctors_shared_between_days(self):
+        input_data = input_factory(doctors_per_duty=2, doctors_count=5)
+
+        doctors = input_data["doctors"]
+        doctors[0]["preferences"]["exceptions"] = [16, 17]
+        doctors[1]["preferences"]["exceptions"] = [16, 17]
+        doctors[2]["preferences"]["exceptions"] = [16]
+
+        result = self.tested_function(input_data)
+
+        self.assertEqual(1, len(result["errors"]))
+        self.assertIn('On days 16 and 17, position 1, 2, there is 1 doctor less than required.', result["errors"][0])
+
+        self.result = result
+
+
+class E2ESettingDutyTests(DutySettingValidationE2ETestMixin, TestCase):
+    @property
+    def tested_function(self):
+        return set_duties
+
     def get_base_input_data(self, doctors_per_duty: int) -> dict[str, Any]:
         input_data = deepcopy(self._base_input_data)
         input_data["unit"]["doctors_per_duty"] = doctors_per_duty
@@ -122,102 +238,46 @@ class E2ETests(TestCase):
         self.assertCountEqual([doctors[3]["pk"], doctors[4]["pk"], doctors[5]["pk"]], doctors_on_duty_on_20)
 
     def test_not_enough_doctors_error(self):
-        input_data = input_factory(doctors_per_duty=3, doctors_count=5)
+        super().test_not_enough_doctors_error()
 
-        result = set_duties(input_data)
-
-        self.assertFalse(result.get("were_any_duties_set"))
-        self.assertFalse(result.get("were_all_duties_set"))
-        self.assertEqual(1, len(result["errors"]))
-        self.assertIn('not enough doctors to fill all positions', result["errors"][0])
+        self.assertFalse(self.result.get("were_any_duties_set"))
+        self.assertFalse(self.result.get("were_all_duties_set"))
 
     def test_incoherent_preferences_errors(self):
-        input_data = input_factory()
+        super().test_incoherent_preferences_errors()
 
-        doctors = input_data["doctors"]
-
-        doctors[0]["preferences"]["requested_days"] = [1, 2]
-
-        doctors[1]["preferences"]["requested_days"] = [5]
-        doctors[1]["preferences"]["exceptions"] = [5]
-
-        doctors[2]["preferences"]["requested_days"] = [10, 12, 14, 16, 18]
-        doctors[2]["preferences"]["maximum_accepted_duties"] = 4
-
-        result = set_duties(input_data)
-
-        self.assertFalse(result.get("were_any_duties_set"))
-        self.assertFalse(result.get("were_all_duties_set"))
-        self.assertEqual(3, len(result["errors"]))
-
-        self.assertTrue(any('requested double duties on the following days' in error for error in result["errors"]))
-        self.assertTrue(
-            any('requests and excludes duties on the following dates' in error for error in result["errors"])
-        )
-        self.assertTrue(
-            any('requests duties on 5 days, but would accept only 4' in error for error in result["errors"])
-        )
+        self.assertFalse(self.result.get("were_any_duties_set"))
+        self.assertFalse(self.result.get("were_all_duties_set"))
 
     def test_requested_days_errors(self):
-        input_data = input_factory(doctors_per_duty=3, duties_count=3)
+        super().test_requested_days_errors()
 
-        doctors = input_data["doctors"]
-
-        doctors[0]["preferences"]["requested_days"] = [19]
-        doctors[1]["preferences"]["requested_days"] = [19]
-        doctors[2]["preferences"]["requested_days"] = [19]
-        doctors[3]["preferences"]["requested_days"] = [19]
-
-        doctors[4]["preferences"]["requested_days"] = [4]
-        duties = input_data["duties"]
-        for i, (doctor, duty) in enumerate(zip(doctors[5:], duties), start=1):
-            duty["day"] = 4
-            duty["doctor_pk"] = doctor["pk"]
-            duty["position"] = i
-
-        result = set_duties(input_data)
-
-        self.assertFalse(result.get("were_any_duties_set"))
-        self.assertFalse(result.get("were_all_duties_set"))
-        self.assertEqual(2, len(result["errors"]))
-
-        self.assertIn('requested duties on day 4, but it was already filled by user', result["errors"][0])
-        self.assertIn('Duty on day 19 was requested', result["errors"][1])
-        self.assertIn('not enough positions available', result["errors"][1])
+        self.assertFalse(self.result.get("were_any_duties_set"))
+        self.assertFalse(self.result.get("were_all_duties_set"))
 
     def test_no_available_doctors_error(self):
-        input_data = input_factory(doctors_per_duty=2, doctors_count=5)
+        super().test_no_available_doctors_error()
 
-        doctors = input_data["doctors"]
-        doctors[0]["preferences"]["exceptions"] = [11]
-        doctors[1]["preferences"]["exceptions"] = [11]
-        doctors[2]["preferences"]["exceptions"] = [11]
-
-        doctors[0]["preferences"]["preferred_positions"] = [1]
-        doctors[1]["preferences"]["preferred_positions"] = [1]
-        doctors[2]["preferences"]["preferred_positions"] = [1]
-        doctors[3]["preferences"]["preferred_positions"] = [2]
-        doctors[4]["preferences"]["preferred_positions"] = [2]
-
-        result = set_duties(input_data)
-
-        self.assertFalse(result.get("were_any_duties_set"))
-        self.assertFalse(result.get("were_all_duties_set"))
-        self.assertEqual(1, len(result["errors"]))
-        self.assertIn(
-            'On the following positions on the following days, there are no doctors available for duty',
-            result["errors"][0],
-        )
+        self.assertFalse(self.result.get("were_any_duties_set"))
+        self.assertFalse(self.result.get("were_all_duties_set"))
 
     def test_not_enough_doctors_shared_between_days(self):
-        input_data = input_factory(doctors_per_duty=2, doctors_count=5)
+        super().test_not_enough_doctors_shared_between_days()
 
-        doctors = input_data["doctors"]
-        doctors[0]["preferences"]["exceptions"] = [16, 17]
-        doctors[1]["preferences"]["exceptions"] = [16, 17]
-        doctors[2]["preferences"]["exceptions"] = [16]
+        self.assertFalse(self.result.get("were_any_duties_set"))
+        self.assertFalse(self.result.get("were_all_duties_set"))
 
-        result = set_duties(input_data)
 
-        self.assertEqual(1, len(result["errors"]))
-        self.assertIn('On days 16 and 17, position 1, 2, there is 1 doctor less than required.', result["errors"][0])
+class E2EValidatingDutiesTests(DutySettingValidationE2ETestMixin, TestCase):
+    @property
+    def tested_function(self):
+        return validate_duties_can_be_set
+
+    def test_result(self):
+        data = input_factory(doctors_per_duty=1, doctors_count=1)
+
+        result = validate_duties_can_be_set(data)
+        self.assertIsInstance(result, dict)
+        self.assertEqual(1, len(result))
+        self.assertIn('errors', result)
+        self.assertIsInstance(result['errors'], list)

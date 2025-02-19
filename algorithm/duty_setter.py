@@ -61,9 +61,6 @@ class DutySetter:
         return next((doctor for doctor in self.doctors if doctor.pk == pk), None)
 
     def set_duties(self) -> None:
-        # In JS version we used to clear duties first. TODO: check if we need to.
-        # We used to clear log here - TODO check if we need to.
-
         can_be_set = self.check_if_duties_can_be_set()
         if not can_be_set:
             return

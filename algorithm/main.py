@@ -47,3 +47,13 @@ def set_duties(data: dict[str, Any]) -> dict[str, Any]:
     result = duty_setter.get_result()
 
     return result.to_dict()
+
+
+def validate_duties_can_be_set(data: dict[str, Any]) -> dict[str, Any]:
+    validated_data = validate_data(data)
+
+    duty_setter = create_duty_setter(validated_data)
+    duty_setter.check_if_duties_can_be_set()
+    result = duty_setter.get_result()
+
+    return {"errors": result.errors}
