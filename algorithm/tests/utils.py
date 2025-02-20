@@ -8,7 +8,7 @@ from faker import Faker
 from algorithm.doctor import Doctor
 from algorithm.duty_setter import DutySetter
 from algorithm.schedule import Day
-from algorithm.utils import comma_join, get_max_number_of_duties_for_month
+from algorithm.utils import comma_join, get_max_number_of_duties_for_month, get_number_of_days_in_month
 
 if TYPE_CHECKING:
     from algorithm.schedule import Duty, DutySchedule
@@ -44,18 +44,29 @@ def input_factory(
         for pk in doctor_pks
     ]
 
-    duty_days = [Day(i, month, year) for i in range(1, min(duties_count, accepted_duties) * 2, 2)]
-    duties = [
-        {
-            "pk": random.choice((i + 1, None)),
-            "doctor_pk": random.choice(doctor_pks),
-            "day": day.number,
-            "position": random.choice(positions),
-            "strain_points": day.strain_points,
-            "set_by_user": True,
-        }
-        for i, day in enumerate(duty_days)
-    ]
+    days_count = get_number_of_days_in_month(year, month)
+
+    duties = []
+    duty_pk = 1
+    for day_number in range(1, days_count + 1):
+        day = Day(day_number, month, year)
+        for position in positions:
+            duties.append(
+                {
+                    "pk": duty_pk,
+                    "doctor_pk": None,
+                    "day": day.number,
+                    "position": position,
+                    "strain_points": day.strain_points,
+                    "set_by_user": False,
+                }
+            )
+            duty_pk += 1
+
+    set_duties_count = min(duties_count, accepted_duties)
+    for i in range(0, set_duties_count * len(positions) * 2, len(positions) * 2):
+        duties[i]["doctor_pk"] = random.choice(doctor_pks)
+        duties[i]["set_by_user"] = True
 
     return {
         "year": year,

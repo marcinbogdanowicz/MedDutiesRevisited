@@ -29,12 +29,15 @@ def create_duty_setter(validated_data: dict[str, Any]) -> DutySetter:
         duty_setter.add_doctor(doctor)
 
     for duty_data in duties_data:
-        doctor_pk = duty_data.pop("doctor_pk")
         day = duty_data.pop("day")
         position = duty_data.pop("position")
 
-        doctor = duty_setter.get_doctor(doctor_pk)
-        schedule[day, position].update(doctor, **duty_data)
+        if duty_data["set_by_user"]:
+            doctor_pk = duty_data.pop("doctor_pk")
+            doctor = duty_setter.get_doctor(doctor_pk)
+            schedule[day, position].update(doctor, **duty_data)
+        else:
+            schedule[day, position].update(None, pk=duty_data["pk"])  # Preserve duty pk for response
 
     return duty_setter
 

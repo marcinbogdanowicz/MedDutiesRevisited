@@ -32,29 +32,29 @@ Validate if duties can be set and attempt filling the schedule if no errors were
 {
     "year": 2025,
     "month": 1,
-    "doctors_per_duty": 2,
+    "doctors_per_duty": 3,
     "doctors": [
         {
             "pk": 1,
-            "name": "Elizabeth Davis",
-            "preferences": {
-                "exceptions": [11, 12, 13],
-                "requested_days": [10, 14],
-                "preferred_weekdays": [0, 1, 3, 4, 5, 6],
-                "preferred_positions": [1, 2],
-                "maximum_accepted_duties": 15
-            },
-            "last_month_duties": [19, 24],
-            "next_month_duties": [1, 17]
-        },
-        {
-            "pk": 2,
-            "name": "Dustin Bray",
+            "name": "David Parker",
             "preferences": {
                 "exceptions": [],
                 "requested_days": [],
                 "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
-                "preferred_positions": [1, 2],
+                "preferred_positions": [1, 2, 3],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 2,
+            "name": "Katie Collins",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2, 3],
                 "maximum_accepted_duties": 15
             },
             "last_month_duties": [],
@@ -62,12 +62,12 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 3,
-            "name": "Matthew Garrett",
+            "name": "Elizabeth Porter",
             "preferences": {
                 "exceptions": [],
                 "requested_days": [],
                 "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
-                "preferred_positions": [1, 2],
+                "preferred_positions": [1, 2, 3],
                 "maximum_accepted_duties": 15
             },
             "last_month_duties": [],
@@ -75,12 +75,12 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 4,
-            "name": "Tammy Ward",
+            "name": "Jennifer Norman",
             "preferences": {
                 "exceptions": [],
                 "requested_days": [],
                 "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
-                "preferred_positions": [1, 2],
+                "preferred_positions": [1, 2, 3],
                 "maximum_accepted_duties": 15
             },
             "last_month_duties": [],
@@ -88,12 +88,77 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 5,
-            "name": "Connor Murphy",
+            "name": "Eric Stanley",
             "preferences": {
                 "exceptions": [],
                 "requested_days": [],
                 "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
-                "preferred_positions": [1, 2],
+                "preferred_positions": [1, 2, 3],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 6,
+            "name": "James Stevens",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2, 3],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 7,
+            "name": "Lori King",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2, 3],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 8,
+            "name": "David West",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2, 3],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 9,
+            "name": "Kimberly White",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2, 3],
+                "maximum_accepted_duties": 15
+            },
+            "last_month_duties": [],
+            "next_month_duties": []
+        },
+        {
+            "pk": 10,
+            "name": "Lisa Gordon",
+            "preferences": {
+                "exceptions": [],
+                "requested_days": [],
+                "preferred_weekdays": [0, 1, 2, 3, 4, 5, 6],
+                "preferred_positions": [1, 2, 3],
                 "maximum_accepted_duties": 15
             },
             "last_month_duties": [],
@@ -103,22 +168,750 @@ Validate if duties can be set and attempt filling the schedule if no errors were
     "duties": [
         {
             "pk": 1,
-            "doctor_pk": 5,
+            "doctor_pk": 9,
             "day": 1,
-            "position": 2,
-            "strain_points": 20,
+            "position": 1,
+            "strain_points": 140,
             "set_by_user": true
         },
         {
             "pk": 2,
-            "doctor_pk": 1,
+            "doctor_pk": null,
+            "day": 1,
+            "position": 2,
+            "strain_points": 140,
+            "set_by_user": false
+        },
+        {
+            "pk": 3,
+            "doctor_pk": null,
+            "day": 1,
+            "position": 3,
+            "strain_points": 140,
+            "set_by_user": false
+        },
+        {
+            "pk": 4,
+            "doctor_pk": null,
+            "day": 2,
+            "position": 1,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 5,
+            "doctor_pk": null,
+            "day": 2,
+            "position": 2,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 6,
+            "doctor_pk": null,
+            "day": 2,
+            "position": 3,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 7,
+            "doctor_pk": 4,
             "day": 3,
             "position": 1,
-            "strain_points": 15,
+            "strain_points": 90,
             "set_by_user": true
+        },
+        {
+            "pk": 8,
+            "doctor_pk": null,
+            "day": 3,
+            "position": 2,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 9,
+            "doctor_pk": null,
+            "day": 3,
+            "position": 3,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 10,
+            "doctor_pk": null,
+            "day": 4,
+            "position": 1,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 11,
+            "doctor_pk": null,
+            "day": 4,
+            "position": 2,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 12,
+            "doctor_pk": null,
+            "day": 4,
+            "position": 3,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 13,
+            "doctor_pk": 1,
+            "day": 5,
+            "position": 1,
+            "strain_points": 100,
+            "set_by_user": true
+        },
+        {
+            "pk": 14,
+            "doctor_pk": null,
+            "day": 5,
+            "position": 2,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 15,
+            "doctor_pk": null,
+            "day": 5,
+            "position": 3,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 16,
+            "doctor_pk": null,
+            "day": 6,
+            "position": 1,
+            "strain_points": 140,
+            "set_by_user": false
+        },
+        {
+            "pk": 17,
+            "doctor_pk": null,
+            "day": 6,
+            "position": 2,
+            "strain_points": 140,
+            "set_by_user": false
+        },
+        {
+            "pk": 18,
+            "doctor_pk": null,
+            "day": 6,
+            "position": 3,
+            "strain_points": 140,
+            "set_by_user": false
+        },
+        {
+            "pk": 19,
+            "doctor_pk": null,
+            "day": 7,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 20,
+            "doctor_pk": null,
+            "day": 7,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 21,
+            "doctor_pk": null,
+            "day": 7,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 22,
+            "doctor_pk": null,
+            "day": 8,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 23,
+            "doctor_pk": null,
+            "day": 8,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 24,
+            "doctor_pk": null,
+            "day": 8,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 25,
+            "doctor_pk": null,
+            "day": 9,
+            "position": 1,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 26,
+            "doctor_pk": null,
+            "day": 9,
+            "position": 2,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 27,
+            "doctor_pk": null,
+            "day": 9,
+            "position": 3,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 28,
+            "doctor_pk": null,
+            "day": 10,
+            "position": 1,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 29,
+            "doctor_pk": null,
+            "day": 10,
+            "position": 2,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 30,
+            "doctor_pk": null,
+            "day": 10,
+            "position": 3,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 31,
+            "doctor_pk": null,
+            "day": 11,
+            "position": 1,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 32,
+            "doctor_pk": null,
+            "day": 11,
+            "position": 2,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 33,
+            "doctor_pk": null,
+            "day": 11,
+            "position": 3,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 34,
+            "doctor_pk": null,
+            "day": 12,
+            "position": 1,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 35,
+            "doctor_pk": null,
+            "day": 12,
+            "position": 2,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 36,
+            "doctor_pk": null,
+            "day": 12,
+            "position": 3,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 37,
+            "doctor_pk": null,
+            "day": 13,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 38,
+            "doctor_pk": null,
+            "day": 13,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 39,
+            "doctor_pk": null,
+            "day": 13,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 40,
+            "doctor_pk": null,
+            "day": 14,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 41,
+            "doctor_pk": null,
+            "day": 14,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 42,
+            "doctor_pk": null,
+            "day": 14,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 43,
+            "doctor_pk": null,
+            "day": 15,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 44,
+            "doctor_pk": null,
+            "day": 15,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 45,
+            "doctor_pk": null,
+            "day": 15,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 46,
+            "doctor_pk": null,
+            "day": 16,
+            "position": 1,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 47,
+            "doctor_pk": null,
+            "day": 16,
+            "position": 2,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 48,
+            "doctor_pk": null,
+            "day": 16,
+            "position": 3,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 49,
+            "doctor_pk": null,
+            "day": 17,
+            "position": 1,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 50,
+            "doctor_pk": null,
+            "day": 17,
+            "position": 2,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 51,
+            "doctor_pk": null,
+            "day": 17,
+            "position": 3,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 52,
+            "doctor_pk": null,
+            "day": 18,
+            "position": 1,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 53,
+            "doctor_pk": null,
+            "day": 18,
+            "position": 2,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 54,
+            "doctor_pk": null,
+            "day": 18,
+            "position": 3,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 55,
+            "doctor_pk": null,
+            "day": 19,
+            "position": 1,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 56,
+            "doctor_pk": null,
+            "day": 19,
+            "position": 2,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 57,
+            "doctor_pk": null,
+            "day": 19,
+            "position": 3,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 58,
+            "doctor_pk": null,
+            "day": 20,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 59,
+            "doctor_pk": null,
+            "day": 20,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 60,
+            "doctor_pk": null,
+            "day": 20,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 61,
+            "doctor_pk": null,
+            "day": 21,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 62,
+            "doctor_pk": null,
+            "day": 21,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 63,
+            "doctor_pk": null,
+            "day": 21,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 64,
+            "doctor_pk": null,
+            "day": 22,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 65,
+            "doctor_pk": null,
+            "day": 22,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 66,
+            "doctor_pk": null,
+            "day": 22,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 67,
+            "doctor_pk": null,
+            "day": 23,
+            "position": 1,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 68,
+            "doctor_pk": null,
+            "day": 23,
+            "position": 2,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 69,
+            "doctor_pk": null,
+            "day": 23,
+            "position": 3,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 70,
+            "doctor_pk": null,
+            "day": 24,
+            "position": 1,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 71,
+            "doctor_pk": null,
+            "day": 24,
+            "position": 2,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 72,
+            "doctor_pk": null,
+            "day": 24,
+            "position": 3,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 73,
+            "doctor_pk": null,
+            "day": 25,
+            "position": 1,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 74,
+            "doctor_pk": null,
+            "day": 25,
+            "position": 2,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 75,
+            "doctor_pk": null,
+            "day": 25,
+            "position": 3,
+            "strain_points": 110,
+            "set_by_user": false
+        },
+        {
+            "pk": 76,
+            "doctor_pk": null,
+            "day": 26,
+            "position": 1,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 77,
+            "doctor_pk": null,
+            "day": 26,
+            "position": 2,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 78,
+            "doctor_pk": null,
+            "day": 26,
+            "position": 3,
+            "strain_points": 100,
+            "set_by_user": false
+        },
+        {
+            "pk": 79,
+            "doctor_pk": null,
+            "day": 27,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 80,
+            "doctor_pk": null,
+            "day": 27,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 81,
+            "doctor_pk": null,
+            "day": 27,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 82,
+            "doctor_pk": null,
+            "day": 28,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 83,
+            "doctor_pk": null,
+            "day": 28,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 84,
+            "doctor_pk": null,
+            "day": 28,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 85,
+            "doctor_pk": null,
+            "day": 29,
+            "position": 1,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 86,
+            "doctor_pk": null,
+            "day": 29,
+            "position": 2,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 87,
+            "doctor_pk": null,
+            "day": 29,
+            "position": 3,
+            "strain_points": 80,
+            "set_by_user": false
+        },
+        {
+            "pk": 88,
+            "doctor_pk": null,
+            "day": 30,
+            "position": 1,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 89,
+            "doctor_pk": null,
+            "day": 30,
+            "position": 2,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 90,
+            "doctor_pk": null,
+            "day": 30,
+            "position": 3,
+            "strain_points": 70,
+            "set_by_user": false
+        },
+        {
+            "pk": 91,
+            "doctor_pk": null,
+            "day": 31,
+            "position": 1,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 92,
+            "doctor_pk": null,
+            "day": 31,
+            "position": 2,
+            "strain_points": 90,
+            "set_by_user": false
+        },
+        {
+            "pk": 93,
+            "doctor_pk": null,
+            "day": 31,
+            "position": 3,
+            "strain_points": 90,
+            "set_by_user": false
         }
     ],
-    "locale": "en" // optional; available options: pl, en
+    "locale": "en"
 }
 ```
 </details>
@@ -732,7 +1525,7 @@ Empty `"errors"` list indicates that no errors were found.
             "set_by_user": true
         }
     ],
-    "locale": "en" // optional; available options: pl, en
+    "locale": "en"
 }
 ```
 </details>

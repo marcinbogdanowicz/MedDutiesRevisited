@@ -5,10 +5,10 @@ from algorithm.utils import get_max_number_of_duties_for_month, get_number_of_da
 
 
 class DutySerializer(BaseModel):
-    pk: int | None = None
+    pk: int
     day: int
     position: int
-    doctor_pk: int
+    doctor_pk: int | None
     strain_points: int
     set_by_user: bool
 

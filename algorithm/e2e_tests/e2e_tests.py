@@ -56,6 +56,10 @@ class DutySettingValidationE2ETestMixin:
 
     def test_requested_days_errors(self):
         input_data = input_factory(doctors_per_duty=3, duties_count=3)
+        input_data['duties'] = [
+            {k: int(v) if k == 'strain_points' else v for k, v in duty.items()} for duty in input_data['duties']
+        ]
+        print('\n', input_data, '\n\n')
 
         doctors = input_data["doctors"]
 
@@ -65,11 +69,11 @@ class DutySettingValidationE2ETestMixin:
         doctors[3]["preferences"]["requested_days"] = [19]
 
         doctors[4]["preferences"]["requested_days"] = [4]
-        duties = input_data["duties"]
-        for i, (doctor, duty) in enumerate(zip(doctors[5:], duties), start=1):
-            duty["day"] = 4
+
+        for position, doctor in enumerate(doctors[:3], start=1):
+            duty = next(duty for duty in input_data["duties"] if duty["day"] == 4 and duty["position"] == position)
             duty["doctor_pk"] = doctor["pk"]
-            duty["position"] = i
+            duty["set_by_user"] = True
 
         result = self.tested_function(input_data)
 
@@ -162,7 +166,7 @@ class E2ESettingDutyTests(DutySettingValidationE2ETestMixin, TestCase):
         for duty in duties:
             self.assertIsInstance(duty["day"], int)
             self.assertIn(duty["position"], range(1, input_data["doctors_per_duty"] + 1))
-            self.assertIsNone(duty["pk"])
+            self.assertIsNotNone(duty["pk"])
             self.assertIn(duty["doctor_pk"], doctor_pks)
             self.assertFalse(duty["set_by_user"])
             self.assertGreater(duty["strain_points"], 0)
