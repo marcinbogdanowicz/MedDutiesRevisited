@@ -42,7 +42,7 @@ class SetDutiesFunctionTests(TestCase):
             self.assertEqual(duty.strain_points, duty_data["strain_points"])
             self.assertEqual(duty.set_by_user, duty_data["set_by_user"])
             if duty.doctor:
-                self.assertEqual(duty.doctor.pk, duty_data["doctor_pk"])
+                self.assertEqual(duty.doctor.pk, duty_data["doctor"])
 
         self.assertEqual(10, len(duty_setter.doctors))
         for doctor_data in input_data["doctors"]:

@@ -56,10 +56,6 @@ class DutySettingValidationE2ETestMixin:
 
     def test_requested_days_errors(self):
         input_data = input_factory(doctors_per_duty=3, duties_count=3)
-        input_data['duties'] = [
-            {k: int(v) if k == 'strain_points' else v for k, v in duty.items()} for duty in input_data['duties']
-        ]
-        print('\n', input_data, '\n\n')
 
         doctors = input_data["doctors"]
 
@@ -72,7 +68,7 @@ class DutySettingValidationE2ETestMixin:
 
         for position, doctor in enumerate(doctors[:3], start=1):
             duty = next(duty for duty in input_data["duties"] if duty["day"] == 4 and duty["position"] == position)
-            duty["doctor_pk"] = doctor["pk"]
+            duty["doctor"] = doctor["pk"]
             duty["set_by_user"] = True
 
         result = self.tested_function(input_data)
@@ -139,12 +135,10 @@ class E2ESettingDutyTests(DutySettingValidationE2ETestMixin, TestCase):
         return input_data
 
     def get_doctors_on_duty(self, day_number, duties_list) -> list[int]:
-        return [
-            duty["doctor_pk"] for duty in duties_list if duty["doctor_pk"] is not None and duty["day"] == day_number
-        ]
+        return [duty["doctor"] for duty in duties_list if duty["doctor"] is not None and duty["day"] == day_number]
 
-    def get_duties_for_doctor(self, doctor_pk, duties_list) -> list[dict[str, Any]]:
-        return [duty for duty in duties_list if duty["doctor_pk"] == doctor_pk]
+    def get_duties_for_doctor(self, doctor, duties_list) -> list[dict[str, Any]]:
+        return [duty for duty in duties_list if duty["doctor"] == doctor]
 
     def test_success(self):
         input_data = input_factory(doctors_per_duty=3)
@@ -167,7 +161,7 @@ class E2ESettingDutyTests(DutySettingValidationE2ETestMixin, TestCase):
             self.assertIsInstance(duty["day"], int)
             self.assertIn(duty["position"], range(1, input_data["doctors_per_duty"] + 1))
             self.assertIsNotNone(duty["pk"])
-            self.assertIn(duty["doctor_pk"], doctor_pks)
+            self.assertIn(duty["doctor"], doctor_pks)
             self.assertFalse(duty["set_by_user"])
             self.assertGreater(duty["strain_points"], 0)
 
@@ -175,8 +169,8 @@ class E2ESettingDutyTests(DutySettingValidationE2ETestMixin, TestCase):
         strain_per_doctor = defaultdict(int)
         number_of_duties_per_doctor = defaultdict(int)
         for duty in duties:
-            strain_per_doctor[duty["doctor_pk"]] += duty["strain_points"]
-            number_of_duties_per_doctor[duty["doctor_pk"]] += 1
+            strain_per_doctor[duty["doctor"]] += duty["strain_points"]
+            number_of_duties_per_doctor[duty["doctor"]] += 1
 
         def assert_difference_from_mean_less_equal(accepted_difference_ratio: float, values: list[int]):
             mean_strain = mean(values)
@@ -238,7 +232,7 @@ class E2ESettingDutyTests(DutySettingValidationE2ETestMixin, TestCase):
             duty_weekday = date(input_data["year"], input_data["month"], duty["day"]).weekday()
             self.assertIn(duty_weekday, input_data["doctors"][2]["preferences"]["preferred_weekdays"])
 
-        doctors_on_duty_on_20 = [duty["doctor_pk"] for duty in duties if duty["day"] == 20]
+        doctors_on_duty_on_20 = [duty["doctor"] for duty in duties if duty["day"] == 20]
         self.assertCountEqual([doctors[3]["pk"], doctors[4]["pk"], doctors[5]["pk"]], doctors_on_duty_on_20)
 
     def test_not_enough_doctors_error(self):

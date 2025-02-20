@@ -168,7 +168,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
     "duties": [
         {
             "pk": 1,
-            "doctor_pk": 9,
+            "doctor": 9,
             "day": 1,
             "position": 1,
             "strain_points": 140,
@@ -176,7 +176,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 2,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 1,
             "position": 2,
             "strain_points": 140,
@@ -184,7 +184,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 3,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 1,
             "position": 3,
             "strain_points": 140,
@@ -192,7 +192,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 4,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 2,
             "position": 1,
             "strain_points": 70,
@@ -200,7 +200,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 5,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 2,
             "position": 2,
             "strain_points": 70,
@@ -208,7 +208,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 6,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 2,
             "position": 3,
             "strain_points": 70,
@@ -216,7 +216,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 7,
-            "doctor_pk": 4,
+            "doctor": 4,
             "day": 3,
             "position": 1,
             "strain_points": 90,
@@ -224,7 +224,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 8,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 3,
             "position": 2,
             "strain_points": 90,
@@ -232,7 +232,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 9,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 3,
             "position": 3,
             "strain_points": 90,
@@ -240,7 +240,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 10,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 4,
             "position": 1,
             "strain_points": 110,
@@ -248,7 +248,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 11,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 4,
             "position": 2,
             "strain_points": 110,
@@ -256,7 +256,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 12,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 4,
             "position": 3,
             "strain_points": 110,
@@ -264,7 +264,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 13,
-            "doctor_pk": 1,
+            "doctor": 1,
             "day": 5,
             "position": 1,
             "strain_points": 100,
@@ -272,7 +272,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 14,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 5,
             "position": 2,
             "strain_points": 100,
@@ -280,7 +280,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 15,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 5,
             "position": 3,
             "strain_points": 100,
@@ -288,7 +288,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 16,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 6,
             "position": 1,
             "strain_points": 140,
@@ -296,7 +296,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 17,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 6,
             "position": 2,
             "strain_points": 140,
@@ -304,7 +304,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 18,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 6,
             "position": 3,
             "strain_points": 140,
@@ -312,7 +312,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 19,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 7,
             "position": 1,
             "strain_points": 80,
@@ -320,7 +320,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 20,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 7,
             "position": 2,
             "strain_points": 80,
@@ -328,7 +328,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 21,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 7,
             "position": 3,
             "strain_points": 80,
@@ -336,7 +336,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 22,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 8,
             "position": 1,
             "strain_points": 80,
@@ -344,7 +344,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 23,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 8,
             "position": 2,
             "strain_points": 80,
@@ -352,7 +352,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 24,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 8,
             "position": 3,
             "strain_points": 80,
@@ -360,7 +360,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 25,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 9,
             "position": 1,
             "strain_points": 70,
@@ -368,7 +368,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 26,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 9,
             "position": 2,
             "strain_points": 70,
@@ -376,7 +376,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 27,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 9,
             "position": 3,
             "strain_points": 70,
@@ -384,7 +384,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 28,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 10,
             "position": 1,
             "strain_points": 90,
@@ -392,7 +392,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 29,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 10,
             "position": 2,
             "strain_points": 90,
@@ -400,7 +400,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 30,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 10,
             "position": 3,
             "strain_points": 90,
@@ -408,7 +408,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 31,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 11,
             "position": 1,
             "strain_points": 110,
@@ -416,7 +416,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 32,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 11,
             "position": 2,
             "strain_points": 110,
@@ -424,7 +424,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 33,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 11,
             "position": 3,
             "strain_points": 110,
@@ -432,7 +432,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 34,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 12,
             "position": 1,
             "strain_points": 100,
@@ -440,7 +440,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 35,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 12,
             "position": 2,
             "strain_points": 100,
@@ -448,7 +448,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 36,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 12,
             "position": 3,
             "strain_points": 100,
@@ -456,7 +456,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 37,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 13,
             "position": 1,
             "strain_points": 80,
@@ -464,7 +464,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 38,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 13,
             "position": 2,
             "strain_points": 80,
@@ -472,7 +472,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 39,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 13,
             "position": 3,
             "strain_points": 80,
@@ -480,7 +480,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 40,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 14,
             "position": 1,
             "strain_points": 80,
@@ -488,7 +488,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 41,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 14,
             "position": 2,
             "strain_points": 80,
@@ -496,7 +496,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 42,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 14,
             "position": 3,
             "strain_points": 80,
@@ -504,7 +504,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 43,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 15,
             "position": 1,
             "strain_points": 80,
@@ -512,7 +512,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 44,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 15,
             "position": 2,
             "strain_points": 80,
@@ -520,7 +520,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 45,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 15,
             "position": 3,
             "strain_points": 80,
@@ -528,7 +528,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 46,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 16,
             "position": 1,
             "strain_points": 70,
@@ -536,7 +536,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 47,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 16,
             "position": 2,
             "strain_points": 70,
@@ -544,7 +544,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 48,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 16,
             "position": 3,
             "strain_points": 70,
@@ -552,7 +552,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 49,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 17,
             "position": 1,
             "strain_points": 90,
@@ -560,7 +560,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 50,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 17,
             "position": 2,
             "strain_points": 90,
@@ -568,7 +568,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 51,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 17,
             "position": 3,
             "strain_points": 90,
@@ -576,7 +576,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 52,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 18,
             "position": 1,
             "strain_points": 110,
@@ -584,7 +584,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 53,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 18,
             "position": 2,
             "strain_points": 110,
@@ -592,7 +592,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 54,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 18,
             "position": 3,
             "strain_points": 110,
@@ -600,7 +600,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 55,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 19,
             "position": 1,
             "strain_points": 100,
@@ -608,7 +608,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 56,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 19,
             "position": 2,
             "strain_points": 100,
@@ -616,7 +616,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 57,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 19,
             "position": 3,
             "strain_points": 100,
@@ -624,7 +624,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 58,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 20,
             "position": 1,
             "strain_points": 80,
@@ -632,7 +632,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 59,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 20,
             "position": 2,
             "strain_points": 80,
@@ -640,7 +640,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 60,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 20,
             "position": 3,
             "strain_points": 80,
@@ -648,7 +648,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 61,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 21,
             "position": 1,
             "strain_points": 80,
@@ -656,7 +656,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 62,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 21,
             "position": 2,
             "strain_points": 80,
@@ -664,7 +664,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 63,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 21,
             "position": 3,
             "strain_points": 80,
@@ -672,7 +672,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 64,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 22,
             "position": 1,
             "strain_points": 80,
@@ -680,7 +680,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 65,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 22,
             "position": 2,
             "strain_points": 80,
@@ -688,7 +688,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 66,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 22,
             "position": 3,
             "strain_points": 80,
@@ -696,7 +696,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 67,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 23,
             "position": 1,
             "strain_points": 70,
@@ -704,7 +704,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 68,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 23,
             "position": 2,
             "strain_points": 70,
@@ -712,7 +712,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 69,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 23,
             "position": 3,
             "strain_points": 70,
@@ -720,7 +720,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 70,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 24,
             "position": 1,
             "strain_points": 90,
@@ -728,7 +728,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 71,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 24,
             "position": 2,
             "strain_points": 90,
@@ -736,7 +736,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 72,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 24,
             "position": 3,
             "strain_points": 90,
@@ -744,7 +744,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 73,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 25,
             "position": 1,
             "strain_points": 110,
@@ -752,7 +752,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 74,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 25,
             "position": 2,
             "strain_points": 110,
@@ -760,7 +760,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 75,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 25,
             "position": 3,
             "strain_points": 110,
@@ -768,7 +768,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 76,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 26,
             "position": 1,
             "strain_points": 100,
@@ -776,7 +776,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 77,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 26,
             "position": 2,
             "strain_points": 100,
@@ -784,7 +784,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 78,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 26,
             "position": 3,
             "strain_points": 100,
@@ -792,7 +792,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 79,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 27,
             "position": 1,
             "strain_points": 80,
@@ -800,7 +800,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 80,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 27,
             "position": 2,
             "strain_points": 80,
@@ -808,7 +808,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 81,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 27,
             "position": 3,
             "strain_points": 80,
@@ -816,7 +816,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 82,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 28,
             "position": 1,
             "strain_points": 80,
@@ -824,7 +824,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 83,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 28,
             "position": 2,
             "strain_points": 80,
@@ -832,7 +832,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 84,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 28,
             "position": 3,
             "strain_points": 80,
@@ -840,7 +840,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 85,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 29,
             "position": 1,
             "strain_points": 80,
@@ -848,7 +848,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 86,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 29,
             "position": 2,
             "strain_points": 80,
@@ -856,7 +856,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 87,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 29,
             "position": 3,
             "strain_points": 80,
@@ -864,7 +864,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 88,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 30,
             "position": 1,
             "strain_points": 70,
@@ -872,7 +872,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 89,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 30,
             "position": 2,
             "strain_points": 70,
@@ -880,7 +880,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 90,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 30,
             "position": 3,
             "strain_points": 70,
@@ -888,7 +888,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 91,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 31,
             "position": 1,
             "strain_points": 90,
@@ -896,7 +896,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 92,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 31,
             "position": 2,
             "strain_points": 90,
@@ -904,7 +904,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "pk": 93,
-            "doctor_pk": null,
+            "doctor": null,
             "day": 31,
             "position": 3,
             "strain_points": 90,
@@ -924,7 +924,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
     "duties": [
         {
             "day": 1,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -932,7 +932,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 1,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": 1,
             "position": 2,
             "set_by_user": true,
@@ -940,7 +940,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 2,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -948,7 +948,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 2,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -956,7 +956,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 3,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": 2,
             "position": 1,
             "set_by_user": true,
@@ -964,7 +964,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 3,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -972,7 +972,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 4,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -980,7 +980,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 4,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -988,7 +988,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 5,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -996,7 +996,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 5,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1004,7 +1004,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 6,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1012,7 +1012,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 6,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1020,7 +1020,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 7,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1028,7 +1028,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 7,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1036,7 +1036,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 8,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1044,7 +1044,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 8,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1052,7 +1052,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 9,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1060,7 +1060,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 9,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1068,7 +1068,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 10,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1076,7 +1076,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 10,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1084,7 +1084,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 11,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1092,7 +1092,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 11,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1100,7 +1100,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 12,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1108,7 +1108,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 12,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1116,7 +1116,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 13,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1124,7 +1124,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 13,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1132,7 +1132,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 14,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1140,7 +1140,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 14,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1148,7 +1148,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 15,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1156,7 +1156,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 15,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1164,7 +1164,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 16,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1172,7 +1172,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 16,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1180,7 +1180,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 17,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1188,7 +1188,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 17,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1196,7 +1196,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 18,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1204,7 +1204,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 18,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1212,7 +1212,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 19,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1220,7 +1220,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 19,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1228,7 +1228,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 20,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1236,7 +1236,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 20,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1244,7 +1244,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 21,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1252,7 +1252,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 21,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1260,7 +1260,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 22,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1268,7 +1268,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 22,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1276,7 +1276,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 23,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1284,7 +1284,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 23,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1292,7 +1292,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 24,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1300,7 +1300,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 24,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1308,7 +1308,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 25,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1316,7 +1316,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 25,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1324,7 +1324,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 26,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1332,7 +1332,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 26,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1340,7 +1340,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 27,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1348,7 +1348,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 27,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1356,7 +1356,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 28,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1364,7 +1364,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 28,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1372,7 +1372,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 29,
-            "doctor_pk": 5,
+            "doctor": 5,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1380,7 +1380,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 29,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1388,7 +1388,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 30,
-            "doctor_pk": 1,
+            "doctor": 1,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1396,7 +1396,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 30,
-            "doctor_pk": 2,
+            "doctor": 2,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1404,7 +1404,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 31,
-            "doctor_pk": 4,
+            "doctor": 4,
             "pk": null,
             "position": 1,
             "set_by_user": false,
@@ -1412,7 +1412,7 @@ Validate if duties can be set and attempt filling the schedule if no errors were
         },
         {
             "day": 31,
-            "doctor_pk": 3,
+            "doctor": 3,
             "pk": null,
             "position": 2,
             "set_by_user": false,
@@ -1510,7 +1510,7 @@ Empty `"errors"` list indicates that no errors were found.
     "duties": [
         {
             "pk": 1,
-            "doctor_pk": 5,
+            "doctor": 5,
             "day": 1,
             "position": 2,
             "strain_points": 20,
@@ -1518,7 +1518,7 @@ Empty `"errors"` list indicates that no errors were found.
         },
         {
             "pk": 2,
-            "doctor_pk": 1,
+            "doctor": 1,
             "day": 3,
             "position": 1,
             "strain_points": 15,

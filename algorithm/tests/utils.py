@@ -54,7 +54,7 @@ def input_factory(
             duties.append(
                 {
                     "pk": duty_pk,
-                    "doctor_pk": None,
+                    "doctor": None,
                     "day": day.number,
                     "position": position,
                     "strain_points": day.strain_points,
@@ -65,7 +65,7 @@ def input_factory(
 
     set_duties_count = min(duties_count, accepted_duties)
     for i in range(0, set_duties_count * len(positions) * 2, len(positions) * 2):
-        duties[i]["doctor_pk"] = random.choice(doctor_pks)
+        duties[i]["doctor"] = random.choice(doctor_pks)
         duties[i]["set_by_user"] = True
 
     return {

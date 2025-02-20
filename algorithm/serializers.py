@@ -8,7 +8,7 @@ class DutySerializer(BaseModel):
     pk: int
     day: int
     position: int
-    doctor_pk: int | None
+    doctor: int | None
     strain_points: int
     set_by_user: bool
 

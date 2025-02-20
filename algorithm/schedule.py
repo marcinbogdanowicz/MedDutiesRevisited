@@ -171,7 +171,7 @@ class Duty(Cell):
     def to_dict(self) -> dict[str, Any]:
         return {
             "pk": self.pk,
-            "doctor_pk": self.doctor.pk if self.doctor else None,
+            "doctor": self.doctor.pk if self.doctor else None,
             "day": self.day.number,
             "position": self.position,
             "strain_points": self.strain_points,
